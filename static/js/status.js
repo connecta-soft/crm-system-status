@@ -21,7 +21,7 @@ function initializeUptimeCharts() {
         // Generate sample data for 3 months (90 days)
         const data = Array(90).fill(null).map(() => {
             const rand = Math.random();
-            if (rand > 0.9) return Math.floor(Math.random() * 100); // Random downtime percentage
+            if (rand > 0.9) return 0; // Complete downtime
             if (rand > 0.1) return 100; // Up
             return null; // No data
         });
@@ -37,11 +37,12 @@ function initializeUptimeCharts() {
                 datasets: [{
                     data: data,
                     borderWidth: 0,
+                    borderRadius: 4,
                     barPercentage: 1,
                     categoryPercentage: 1,
                     backgroundColor: data.map(value => {
                         if (value === null) return '#e9ecef'; // No data
-                        if (value < 100) return '#dc3545';    // Partial/Full downtime (red)
+                        if (value === 0) return '#dc3545';    // Down (red)
                         return '#3bd671';                     // Up (green)
                     })
                 }]
@@ -87,8 +88,7 @@ function initializeUptimeCharts() {
 
                             let status = 'No records';
                             if (value !== null) {
-                                status = value === 100 ? '100% operational' : 
-                                    `${value}% operational`;
+                                status = value === 100 ? '100% operational' : 'Down';
                             }
 
                             tooltipEl.innerHTML = `
@@ -107,7 +107,11 @@ function initializeUptimeCharts() {
                 },
                 scales: {
                     x: {
-                        display: false
+                        display: false,
+                        offset: false,
+                        grid: {
+                            display: false
+                        }
                     },
                     y: {
                         display: false,
@@ -118,7 +122,7 @@ function initializeUptimeCharts() {
                 animation: false,
                 barThickness: 6,
                 maxBarThickness: 6,
-                minBarLength: 30
+                minBarLength: 40
             }
         });
     });

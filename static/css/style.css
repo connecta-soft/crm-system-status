@@ -101,6 +101,12 @@ body {
 .uptime-graph {
     margin: 1rem 0;
     height: 40px;
+    padding: 0 2px;
+}
+
+.uptime-graph canvas {
+    border-radius: 4px;
+    overflow: hidden;
 }
 
 /* Custom tooltip styles */
