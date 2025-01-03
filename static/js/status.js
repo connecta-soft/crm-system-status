@@ -19,12 +19,7 @@ function initializeUptimeCharts() {
         const monitorId = canvas.dataset.monitorId;
 
         // Generate sample data for 3 months (90 days)
-        const data = Array(90).fill(null).map(() => {
-            const rand = Math.random();
-            if (rand > 0.9) return Math.floor(Math.random() * 100); // Random downtime percentage
-            if (rand > 0.1) return 100; // Up
-            return null; // No data
-        });
+        const data = Array(90).fill(null).map(() => null); // Initialize with no data
 
         charts[monitorId] = new Chart(ctx, {
             type: 'bar',
@@ -169,7 +164,9 @@ function updateMonitorCards(monitors) {
         if (card) {
             // Update uptime percentage
             const uptimeElement = card.querySelector('.service-uptime');
-            uptimeElement.textContent = `${monitor.uptime.toFixed(3)}%`;
+            if (uptimeElement) {
+                uptimeElement.textContent = `${monitor.uptime.toFixed(3)}%`;
+            }
         }
     });
 }
