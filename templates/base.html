@@ -16,7 +16,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <h1 class="h4 mb-0">System Status</h1>
                 <div class="status-update text-end">
-                    <small>Last updated <span id="last-update">{{ monitors[0].last_check if monitors and monitors[0].last_check and not monitors[0].last_check.startswith('1970') else now.strftime('%Y-%m-%d %H:%M:%S') }}</span> | Next update in <span id="countdown">60</span>s</small>
+                    <small>Last updated <span id="last-update">{{ now.strftime('%Y-%m-%d %H:%M:%S') }}</span> | Next update in <span id="countdown">60</span>s</small>
                 </div>
             </div>
         </div>

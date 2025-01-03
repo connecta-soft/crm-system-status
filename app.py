@@ -39,10 +39,11 @@ def monitor_detail(monitor_id):
         monitor_data = fetch_monitor_detail(UPTIMEROBOT_API_KEY, monitor_id)
         return render_template('monitor_detail.html', 
                              monitor=monitor_data['monitor'],
-                             events=monitor_data['events'])
+                             events=monitor_data['events'],
+                             now=datetime.now())
     except Exception as e:
         logger.error(f"Error fetching monitor detail: {str(e)}")
-        return render_template('monitor_detail.html', error="Unable to fetch monitor details")
+        return render_template('monitor_detail.html', error="Unable to fetch monitor details", now=datetime.now())
 
 @app.route('/api/monitors')
 def get_monitors():
