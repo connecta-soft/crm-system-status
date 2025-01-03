@@ -7,10 +7,12 @@
         </div>
     {% else %}
         <div class="status-overview mb-4">
-            <h2 class="h4">Service status</h2>
-            <p class="text-muted">
-                Last updated {{ monitors[0].last_check if monitors else 'N/A' }} | Next update in <span id="next-update-countdown">60</span> sec.
-            </p>
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="h4">Service status</h2>
+                <p class="text-muted mb-0">
+                    Last updated {{ monitors[0].last_check if monitors else 'N/A' }} | Next update in <span id="next-update-countdown">60</span> sec.
+                </p>
+            </div>
 
             <div class="overall-status mt-4">
                 <div class="status-indicator {% if monitors and monitors|selectattr('status', 'equalto', 'Up')|list|length == monitors|length %}up{% else %}down{% endif %}">
