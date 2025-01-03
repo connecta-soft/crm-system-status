@@ -73,12 +73,13 @@ function initializeUptimeCharts() {
                 labels: data.map(d => d.date),
                 datasets: [{
                     data: data.map(d => ({ x: d.date, y: 100 })), // Set all bars to full height
-                    backgroundColor: isUp ? 
+                    backgroundColor: isUp ?
                         data.map(d => d.value >= 95 ? '#3bd671' : '#dc3545') : // Green for >=95%, red for <95%
-                        '#4a4a4a', // Deep gray for down systems
+                        '#e9ecef', // Light gray for down systems
                     borderWidth: 0,
                     barPercentage: 0.8,
-                    categoryPercentage: 0.9
+                    categoryPercentage: 0.9,
+                    borderRadius: 4
                 }]
             },
             options: {
