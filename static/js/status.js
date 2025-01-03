@@ -2,8 +2,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize uptime charts for each monitor
     initializeUptimeCharts();
 
+    // Start countdown timer
+    startUpdateCountdown();
+
     // Update monitor data every 60 seconds
-    setInterval(updateMonitors, 60000);
+    setInterval(() => {
+        updateMonitors();
+        startUpdateCountdown();
+    }, 60000);
 });
 
 function initializeUptimeCharts() {
@@ -52,6 +58,27 @@ function initializeUptimeCharts() {
     return charts;
 }
 
+function startUpdateCountdown() {
+    let countdown = 60;
+    const nextUpdateElement = document.getElementById('next-update');
+
+    // Clear any existing interval
+    if (window.countdownInterval) {
+        clearInterval(window.countdownInterval);
+    }
+
+    // Update countdown every second
+    window.countdownInterval = setInterval(() => {
+        countdown--;
+        if (nextUpdateElement) {
+            nextUpdateElement.textContent = countdown;
+        }
+        if (countdown <= 0) {
+            clearInterval(window.countdownInterval);
+        }
+    }, 1000);
+}
+
 function updateMonitors() {
     fetch('/api/monitors')
         .then(response => response.json())
@@ -81,10 +108,6 @@ function updateMonitorCards(monitors) {
             // Update uptime percentage
             const uptimeValue = card.querySelector('.uptime-percentage .h4');
             uptimeValue.textContent = `${monitor.uptime.toFixed(2)}%`;
-
-            // Update last check time
-            const lastCheckValue = card.querySelector('.last-check-value');
-            lastCheckValue.textContent = monitor.last_check;
         }
     });
 }
@@ -106,6 +129,12 @@ function updateSystemStatus(monitors) {
 function updateLastUpdateTime() {
     const lastUpdate = document.getElementById('last-update');
     if (lastUpdate) {
-        lastUpdate.textContent = new Date().toLocaleString();
+        const now = new Date();
+        lastUpdate.textContent = now.toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+        });
     }
 }

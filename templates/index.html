@@ -38,7 +38,6 @@
                         <div class="card-body">
                             <div class="service-header mb-3">
                                 <h3 class="h5 mb-2">{{ monitor.name }}</h3>
-                                <p class="text-muted small mb-0">{{ monitor.url }}</p>
                             </div>
 
                             <div class="service-status mb-3">
@@ -55,12 +54,6 @@
 
                             <div class="uptime-graph">
                                 <canvas class="uptime-chart" data-monitor-id="{{ monitor.id }}"></canvas>
-                            </div>
-
-                            <div class="service-details mt-3">
-                                <small class="text-muted">
-                                    Last checked: <span class="last-check-value">{{ monitor.last_check }}</span>
-                                </small>
                             </div>
                         </div>
                     </div>
