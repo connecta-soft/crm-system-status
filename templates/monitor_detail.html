@@ -112,7 +112,7 @@
                                                     Down{% if event.duration %} for {{ (event.duration / 3600)|int }}h, {{ ((event.duration % 3600) / 60)|int }}min{% endif %}
                                                 {% endif %}
                                             </h3>
-                                            <p class="text-muted small mb-0">{{ event.timestamp.split(':')[0:2]|join(':') }}</p>
+                                            <p class="text-muted small mb-0">{{ event.timestamp }}</p>
                                             {% if event.details and event.type == 'down' %}
                                                 <p class="mb-0 mt-2">{{ event.details }}</p>
                                             {% endif %}

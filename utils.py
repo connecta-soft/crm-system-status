@@ -215,8 +215,9 @@ def process_events(logs):
             end_time = next_up_time if next_up_time else current_time
 
             # Calculate duration in seconds
-            duration_seconds = end_time - down_time if end_time > down_time else 0
-            event['duration'] = duration_seconds
+            if end_time and down_time:
+                duration_seconds = end_time - down_time
+                event['duration'] = duration_seconds if duration_seconds > 0 else 0
 
         events.append(event)
     return events
