@@ -44,10 +44,25 @@ function initializeUptimeCharts() {
         const data = Array(90).fill(null).map((_, i) => {
             const date = new Date(today);
             date.setDate(date.getDate() - (90 - i));
-            return {
-                value: isUp ? (95 + (Math.random() * 5)) : 0, // 0% for down systems
-                date: date
-            };
+
+            if (isUp) {
+                // Set specific value for January 1st, 2025
+                if (date.getMonth() === 0 && date.getDate() === 1 && date.getFullYear() === 2025) {
+                    return {
+                        value: 89.272,
+                        date: date
+                    };
+                }
+                return {
+                    value: 95 + (Math.random() * 5), // Generate values between 95-100%
+                    date: date
+                };
+            } else {
+                return {
+                    value: 0, // 0% for down systems
+                    date: date
+                };
+            }
         });
 
         charts[monitorId] = new Chart(ctx, {
@@ -55,9 +70,10 @@ function initializeUptimeCharts() {
             data: {
                 labels: data.map(d => d.date),
                 datasets: [{
-                    data: data.map(d => ({ x: d.date, y: 100 })), // Always 100% height
-                    backgroundColor: isUp ? '#3bd671' : '#4a4a4a', // Deep gray for down systems
-                    borderRadius: 10,
+                    data: data.map(d => ({ x: d.date, y: d.value >=95 ? 100 : d.value })), //Show 100% for values above 95%
+                    backgroundColor: isUp ? 
+                        data.map(d => d.value >= 95 ? '#3bd671' : '#dc3545') : // Green for >=95%, red for <95%
+                        '#4a4a4a', // Deep gray for down systems
                     borderWidth: 0,
                     barPercentage: 0.8,
                     categoryPercentage: 0.9
@@ -148,7 +164,7 @@ function updateSystemStatus(monitors) {
     const statusIcon = document.querySelector('.status-icon');
 
     if (!allOperational) {
-        statusIcon.className = 'status-icon text-warning me-3';
+        statusIcon.className = 'status-icon text-danger me-3';
     }
 }
 
