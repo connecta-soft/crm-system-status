@@ -15,7 +15,7 @@
                         </a>
                         <div class="d-flex align-items-center justify-content-center flex-grow-1">
                             <span class="live-dot {{ 'bg-success' if monitor.status == 'Up' else 'bg-danger' }}" style="width: 12px; height: 12px;"></span>
-                            <h1 class="h4 mb-0 ms-2">{{ monitor.name }} is {{ 'operational' if monitor.status == 'Up' else 'down' }}</h1>
+                            <h1 class="h4 mb-0 ms-2">System {{ '%02d' % loop.index }} is {{ 'operational' if monitor.status == 'Up' else 'down' }}</h1>
                         </div>
                         <div style="width: 50px;"></div>
                     </div>
@@ -109,7 +109,7 @@
                                                 {% elif event.title == 'Monitor started' %}
                                                     Monitor started
                                                 {% else %}
-                                                    Down{% if event.duration %} for {{ (event.duration / 3600)|int }}h, {{ ((event.duration % 3600) / 60)|int }}min{% endif %}
+                                                    Down
                                                 {% endif %}
                                             </h3>
                                             <p class="text-muted small mb-0">{{ event.timestamp.split(':')[0:2]|join(':') }}</p>
@@ -124,6 +124,13 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay d-none">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
             </div>
         </div>
     {% endif %}

@@ -1,4 +1,16 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Show loading overlay on all link clicks
+    document.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            if (!link.hasAttribute('target')) { // Only for internal links
+                const loadingOverlay = document.getElementById('loading-overlay');
+                if (loadingOverlay) {
+                    loadingOverlay.classList.remove('d-none');
+                }
+            }
+        });
+    });
+
     // Start countdown immediately
     startCountdown();
 
@@ -152,14 +164,16 @@ function updateMonitorCards(monitors) {
     monitors.forEach((monitor, index) => {
         const card = document.querySelector(`[data-monitor-id="${monitor.id}"]`);
         if (card) {
-            // Update uptime percentage
-            const uptimeValue = card.querySelector('.uptime-percentage');
-            uptimeValue.textContent = `${monitor.uptime.toFixed(3)}%`;
-            uptimeValue.classList.toggle('text-danger', monitor.uptime === 0.000);
-
             // Update system name
             const systemName = card.querySelector('.h5');
             systemName.textContent = `System ${String(index + 1).padStart(2, '0')}`;
+
+            // Update uptime percentage
+            const uptimeValue = card.querySelector('.uptime-percentage');
+            if (uptimeValue) {
+                uptimeValue.textContent = `${monitor.uptime.toFixed(3)}%`;
+                uptimeValue.classList.toggle('text-danger', monitor.uptime === 0.000);
+            }
         }
     });
 }
