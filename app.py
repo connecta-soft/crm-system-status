@@ -3,7 +3,7 @@ import logging
 from datetime import datetime
 from flask import Flask, render_template, jsonify, make_response
 from flask_cors import CORS
-from utils import fetch_monitor_data
+from utils import fetch_monitor_data, fetch_monitor_detail
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -32,6 +32,18 @@ def index():
         logger.error(f"Error fetching initial monitor data: {str(e)}")
         return render_template('index.html', error="Unable to fetch monitor data", now=datetime.now())
 
+@app.route('/monitor/<monitor_id>')
+def monitor_detail(monitor_id):
+    """Render the detailed monitor view."""
+    try:
+        monitor_data = fetch_monitor_detail(UPTIMEROBOT_API_KEY, monitor_id)
+        return render_template('monitor_detail.html', 
+                             monitor=monitor_data['monitor'],
+                             events=monitor_data['events'])
+    except Exception as e:
+        logger.error(f"Error fetching monitor detail: {str(e)}")
+        return render_template('monitor_detail.html', error="Unable to fetch monitor details")
+
 @app.route('/api/monitors')
 def get_monitors():
     """API endpoint to fetch monitor data."""
@@ -40,6 +52,16 @@ def get_monitors():
         return jsonify({"success": True, "data": monitor_data})
     except Exception as e:
         logger.error(f"Error fetching monitor data: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route('/api/monitor/<monitor_id>')
+def get_monitor_detail(monitor_id):
+    """API endpoint to fetch detailed monitor data."""
+    try:
+        monitor_data = fetch_monitor_detail(UPTIMEROBOT_API_KEY, monitor_id)
+        return jsonify({"success": True, "data": monitor_data})
+    except Exception as e:
+        logger.error(f"Error fetching monitor detail: {str(e)}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 # Error handlers
