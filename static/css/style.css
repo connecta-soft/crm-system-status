@@ -119,8 +119,12 @@ body {
     width: 100%;
 }
 
+.monitor-card {
+    margin-bottom: 20px; /* Updated gap between monitor cards */
+}
+
 .monitor-card .card {
-    border: none;
+    border: 1px solid #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     border-radius: 10px;
 }
@@ -208,11 +212,11 @@ canvas.uptime-chart {
 
 /* Back button hover state */
 .back-button:hover {
-    background-color: #e9ecef; /*Example hover color, adjust as needed*/
+    background-color: #e9ecef;
     cursor: pointer;
 }
 
 /* Consistent gaps between sections */
 section {
-    margin-bottom: 2rem; /* Example gap size, adjust as needed */
+    margin-bottom: 2rem;
 }
