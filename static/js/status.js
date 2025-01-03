@@ -18,34 +18,31 @@ function initializeUptimeCharts() {
         const ctx = canvas.getContext('2d');
         const monitorId = canvas.dataset.monitorId;
 
-        // Generate data for last 90 days (3 months)
-        const dates = Array(90).fill(null).map((_, i) => {
-            const d = new Date();
-            d.setDate(d.getDate() - (89 - i));
-            return d;
+        // Generate sample data for 3 months (90 days)
+        const data = Array(90).fill(null).map(() => {
+            const rand = Math.random();
+            if (rand > 0.9) return 0; // Complete downtime
+            if (rand > 0.1) return 100; // Up
+            return null; // No data
         });
-
-        // Initialize with gray bars (no data)
-        const data = Array(90).fill(null);
 
         charts[monitorId] = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: dates,
+                labels: Array(90).fill('').map((_, i) => {
+                    const d = new Date();
+                    d.setDate(d.getDate() - (89 - i));
+                    return d;
+                }),
                 datasets: [{
                     data: data,
                     borderWidth: 0,
-                    borderRadius: {
-                        topLeft: 4,
-                        topRight: 4,
-                        bottomLeft: 4,
-                        bottomRight: 4
-                    },
-                    barPercentage: 1.0,
-                    categoryPercentage: 1.0,
+                    borderRadius: 4,
+                    barPercentage: 1,
+                    categoryPercentage: 1,
                     backgroundColor: data.map(value => {
                         if (value === null) return '#e9ecef'; // No data
-                        if (value < 100) return '#dc3545';    // Down (red)
+                        if (value === 0) return '#dc3545';    // Down (red)
                         return '#3bd671';                     // Up (green)
                     })
                 }]
@@ -91,7 +88,7 @@ function initializeUptimeCharts() {
 
                             let status = 'No records';
                             if (value !== null) {
-                                status = value === 100 ? '100% operational' : `${value}% operational`;
+                                status = value === 100 ? '100% operational' : 'Down';
                             }
 
                             tooltipEl.innerHTML = `
@@ -113,18 +110,13 @@ function initializeUptimeCharts() {
                         display: false,
                         offset: false,
                         grid: {
-                            display: false,
-                            drawBorder: false
+                            display: false
                         }
                     },
                     y: {
                         display: false,
                         min: 0,
-                        max: 100,
-                        grid: {
-                            display: false,
-                            drawBorder: false
-                        }
+                        max: 100
                     }
                 },
                 animation: false,
@@ -181,15 +173,7 @@ function updateMonitorCards(monitors) {
         if (card) {
             // Update uptime percentage
             const uptimeElement = card.querySelector('.service-uptime');
-            if (uptimeElement) {
-                uptimeElement.textContent = `${monitor.uptime.toFixed(3)}%`;
-            }
-
-            // Update system name
-            const nameElement = card.querySelector('.h5');
-            if (nameElement) {
-                nameElement.textContent = monitor.name;
-            }
+            uptimeElement.textContent = `${monitor.uptime.toFixed(3)}%`;
         }
     });
 }
