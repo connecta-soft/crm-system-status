@@ -1,7 +1,7 @@
 import os
 import logging
 from datetime import datetime
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, make_response
 from flask_cors import CORS
 from utils import fetch_monitor_data, fetch_monitor_detail
 
@@ -37,15 +37,9 @@ def monitor_detail(monitor_id):
     """Render the detailed monitor view."""
     try:
         monitor_data = fetch_monitor_detail(UPTIMEROBOT_API_KEY, monitor_id)
-        logger.debug(f"Monitor detail data: {monitor_data}")  # Add debug logging
-
-        if not monitor_data or 'monitor' not in monitor_data:
-            logger.error("No monitor data returned")
-            return render_template('monitor_detail.html', error="Unable to fetch monitor details", now=datetime.now())
-
         return render_template('monitor_detail.html', 
                              monitor=monitor_data['monitor'],
-                             events=monitor_data.get('events', []),
+                             events=monitor_data['events'],
                              now=datetime.now())
     except Exception as e:
         logger.error(f"Error fetching monitor detail: {str(e)}")
