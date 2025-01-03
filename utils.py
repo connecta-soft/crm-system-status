@@ -127,18 +127,18 @@ def process_uptime_ranges(ranges_str):
     """Process custom uptime ranges string"""
     if not ranges_str:
         return {
-            '1': 100.00,
-            '7': 100.00,
-            '30': 100.00,
-            '90': 100.00
+            '1': 0.00,
+            '7': 0.00,
+            '30': 0.00,
+            '90': 0.00
         }
 
     ranges = ranges_str.split('-')
     return {
-        '1': float(ranges[0]) if len(ranges) > 0 else 100.00,
-        '7': float(ranges[1]) if len(ranges) > 1 else 100.00,
-        '30': float(ranges[2]) if len(ranges) > 2 else 100.00,
-        '90': float(ranges[3]) if len(ranges) > 3 else 100.00
+        '1': float(ranges[0]) if len(ranges) > 0 else 0.00,
+        '7': float(ranges[1]) if len(ranges) > 1 else 0.00,
+        '30': float(ranges[2]) if len(ranges) > 2 else 0.00,
+        '90': float(ranges[3]) if len(ranges) > 3 else 0.00
     }
 
 def process_response_times(response_times):
