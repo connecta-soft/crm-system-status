@@ -1,7 +1,7 @@
 import os
 import logging
 from datetime import datetime
-from flask import Flask, render_template, jsonify, make_response
+from flask import Flask, render_template, jsonify
 from flask_cors import CORS
 from utils import fetch_monitor_data, fetch_monitor_detail
 
@@ -27,6 +27,7 @@ def index():
     """Render the main status page."""
     try:
         initial_data = fetch_monitor_data(UPTIMEROBOT_API_KEY)
+        logger.debug(f"Initial monitor data: {initial_data}")  # Log the data for debugging
         return render_template('index.html', monitors=initial_data, now=datetime.now())
     except Exception as e:
         logger.error(f"Error fetching initial monitor data: {str(e)}")
@@ -37,6 +38,7 @@ def monitor_detail(monitor_id):
     """Render the detailed monitor view."""
     try:
         monitor_data = fetch_monitor_detail(UPTIMEROBOT_API_KEY, monitor_id)
+        logger.debug(f"Monitor detail data: {monitor_data}")  # Log the data for debugging
         return render_template('monitor_detail.html', 
                              monitor=monitor_data['monitor'],
                              events=monitor_data['events'],
