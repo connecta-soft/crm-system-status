@@ -26,6 +26,8 @@ function startCountdown() {
 
     // Update countdown every second
     setInterval(updateCountdown, 1000);
+    // Set initial value
+    countdownElement.textContent = timeLeft;
 }
 
 function initializeUptimeCharts() {
@@ -70,7 +72,7 @@ function initializeUptimeCharts() {
             data: {
                 labels: data.map(d => d.date),
                 datasets: [{
-                    data: data.map(d => ({ x: d.date, y: d.value >=95 ? 100 : d.value })), //Show 100% for values above 95%
+                    data: data.map(d => ({ x: d.date, y: d.value })),
                     backgroundColor: isUp ? 
                         data.map(d => d.value >= 95 ? '#3bd671' : '#dc3545') : // Green for >=95%, red for <95%
                         '#4a4a4a', // Deep gray for down systems
@@ -152,6 +154,7 @@ function updateMonitorCards(monitors) {
             // Update uptime percentage
             const uptimeValue = card.querySelector('.uptime-percentage');
             uptimeValue.textContent = `${monitor.uptime.toFixed(3)}%`;
+            uptimeValue.classList.toggle('text-danger', monitor.uptime === 0.000);
 
             // Update system name
             const systemName = card.querySelector('.h5');
@@ -161,11 +164,29 @@ function updateMonitorCards(monitors) {
 }
 
 function updateSystemStatus(monitors) {
-    const allOperational = monitors.every(monitor => monitor.status === 'Up');
+    const operationalCount = monitors.filter(monitor => monitor.status === 'Up').length;
+    const totalCount = monitors.length;
     const statusIcon = document.querySelector('.status-icon');
+    const statusText = statusIcon.nextElementSibling.querySelector('span');
 
-    if (!allOperational) {
+    if (operationalCount === 0) {
+        // All systems down
         statusIcon.className = 'status-icon text-danger me-3';
+        statusIcon.querySelector('.live-dot').className = 'live-dot bg-danger';
+        statusText.className = 'text-danger';
+        statusText.textContent = 'Down';
+    } else if (operationalCount < totalCount) {
+        // Some systems down
+        statusIcon.className = 'status-icon text-warning me-3';
+        statusIcon.querySelector('.live-dot').className = 'live-dot bg-warning';
+        statusText.className = 'text-warning';
+        statusText.textContent = 'Down';
+    } else {
+        // All systems operational
+        statusIcon.className = 'status-icon text-success me-3';
+        statusIcon.querySelector('.live-dot').className = 'live-dot bg-success';
+        statusText.className = 'text-success';
+        statusText.textContent = 'Operational';
     }
 }
 
