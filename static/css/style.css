@@ -110,11 +110,11 @@ body {
 }
 
 .live-dot.bg-warning {
-    background-color: #ffc107;
+    background-color: #fd7e14;
 }
 
 .live-dot.bg-warning::before {
-    background-color: #ffc107;
+    background-color: #fd7e14;
 }
 
 .live-dot.bg-danger {
@@ -215,10 +215,10 @@ canvas.uptime-chart {
 
 /* Status colors */
 .text-success { color: #3bd671 !important; }
-.text-warning { color: #ffc107 !important; }
+.text-warning { color: #fd7e14 !important; }
 .text-danger { color: #dc3545 !important; }
 .bg-success { background-color: #3bd671 !important; }
-.bg-warning { background-color: #ffc107 !important; }
+.bg-warning { background-color: #fd7e14 !important; }
 .bg-danger { background-color: #dc3545 !important; }
 .bg-info { background-color: #17a2b8 !important; }
 .bg-secondary { background-color: #e9ecef !important; }

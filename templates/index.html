@@ -14,7 +14,7 @@
                     {% set all_down = operational_count == 0 %}
                     {% set some_down = operational_count > 0 and operational_count < total_count %}
                     {% set status_color = 'bg-danger' if all_down else ('bg-warning' if some_down else 'bg-success') %}
-                    {% set text_color = 'text-danger' if all_down else ('bg-warning' if some_down else 'text-success') %}
+                    {% set text_color = 'text-danger' if all_down else ('text-warning' if some_down else 'text-success') %}
                     <div class="d-flex align-items-center">
                         <div class="status-icon {{ text_color }} me-3">
                             <span class="live-dot {{ status_color }}"></span>
