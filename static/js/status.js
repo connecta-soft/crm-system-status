@@ -37,9 +37,14 @@ function initializeUptimeCharts() {
                 datasets: [{
                     data: data,
                     borderWidth: 0,
-                    borderRadius: 4,
-                    barPercentage: 1,
-                    categoryPercentage: 1,
+                    borderRadius: {
+                        topLeft: 4,
+                        topRight: 4,
+                        bottomLeft: 4,
+                        bottomRight: 4
+                    },
+                    barPercentage: 1.0,
+                    categoryPercentage: 1.0,
                     backgroundColor: data.map(value => {
                         if (value === null) return '#e9ecef'; // No data
                         if (value === 0) return '#dc3545';    // Down (red)
@@ -110,13 +115,18 @@ function initializeUptimeCharts() {
                         display: false,
                         offset: false,
                         grid: {
-                            display: false
+                            display: false,
+                            drawBorder: false
                         }
                     },
                     y: {
                         display: false,
                         min: 0,
-                        max: 100
+                        max: 100,
+                        grid: {
+                            display: false,
+                            drawBorder: false
+                        }
                     }
                 },
                 animation: false,
