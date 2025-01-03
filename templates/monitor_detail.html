@@ -108,13 +108,13 @@
                                                 {% if event.details and 'Monitor started' in event.details %}
                                                     Monitor started
                                                 {% elif event.type == 'down' %}
-                                                    {% set duration = next_event.timestamp|string|strptime('%Y-%m-%d %H:%M:%S')|int - event.timestamp|string|strptime('%Y-%m-%d %H:%M:%S')|int if next_event else now|int - event.timestamp|string|strptime('%Y-%m-%d %H:%M:%S')|int %}
+                                                    {% set duration = (next_event.timestamp|parse_datetime - event.timestamp|parse_datetime) if next_event else (now - event.timestamp|parse_datetime) %}
                                                     Down for {{ (duration / 3600)|int }}h, {{ ((duration % 3600) / 60)|int }}min
                                                 {% else %}
                                                     Running again
                                                 {% endif %}
                                             </h3>
-                                            <p class="text-muted small mb-0">{{ event.timestamp.split('.')[0] }} GMT +00:00</p>
+                                            <p class="text-muted small mb-0">{{ event.timestamp.split(':')[0] }}:{{ event.timestamp.split(':')[1] }} GMT +00:00</p>
                                             {% if event.details and event.type == 'down' and 'Connection Timeout' in event.details %}
                                                 <p class="mb-0 mt-2">The reason was Connection Timeout.<br>Details: The response took so long that the connection timed out.</p>
                                             {% endif %}

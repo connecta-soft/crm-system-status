@@ -17,10 +17,17 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", "default_secret_key")
 # Get API key from environment variable
 UPTIMEROBOT_API_KEY = os.environ.get("UPTIMEROBOT_API_KEY")
 
-# Custom template filter for padding numbers
+# Custom template filters
 @app.template_filter('zfill')
 def zfill_filter(value, width=2):
     return str(value).zfill(width)
+
+@app.template_filter('parse_datetime')
+def parse_datetime(value):
+    try:
+        return datetime.strptime(value, '%Y-%m-%d %H:%M:%S').timestamp()
+    except (ValueError, TypeError):
+        return 0
 
 @app.route('/')
 def index():
@@ -40,7 +47,7 @@ def monitor_detail(monitor_id):
         return render_template('monitor_detail.html', 
                              monitor=monitor_data['monitor'],
                              events=monitor_data['events'],
-                             now=datetime.now())
+                             now=datetime.now().timestamp())
     except Exception as e:
         logger.error(f"Error fetching monitor detail: {str(e)}")
         return render_template('monitor_detail.html', error="Unable to fetch monitor details", now=datetime.now())
