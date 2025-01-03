@@ -173,7 +173,9 @@ function updateMonitorCards(monitors) {
         if (card) {
             // Update uptime percentage
             const uptimeElement = card.querySelector('.service-uptime');
-            uptimeElement.textContent = `${monitor.uptime.toFixed(3)}%`;
+            if (uptimeElement) {
+                uptimeElement.textContent = `${monitor.uptime.toFixed(3)}%`;
+            }
         }
     });
 }
