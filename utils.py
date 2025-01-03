@@ -21,9 +21,11 @@ def fetch_monitor_data(api_key):
     payload = {
         "api_key": api_key,
         "format": "json",
-        "all_time_uptime_ratio": "1",
+        "custom_uptime_ratios": "1-7-30-90",
         "response_times": "1",
-        "response_times_limit": "1"
+        "response_times_limit": "1",
+        "logs": "1",
+        "logs_limit": "1"
     }
 
     try:
@@ -41,14 +43,21 @@ def fetch_monitor_data(api_key):
         processed_monitors = []
         for monitor in data['monitors']:
             try:
+                # Get custom uptime ratios
+                custom_ratios = monitor.get('custom_uptime_ratio', '').split('-')
+                uptime_ranges = {
+                    '1': float(custom_ratios[0]) if len(custom_ratios) > 0 else 0.000,
+                    '7': float(custom_ratios[1]) if len(custom_ratios) > 1 else 0.000,
+                    '30': float(custom_ratios[2]) if len(custom_ratios) > 2 else 0.000,
+                    '90': float(custom_ratios[3]) if len(custom_ratios) > 3 else 0.000
+                }
+
                 processed_monitor = {
                     'id': monitor.get('id'),
-                    'name': monitor.get('friendly_name', 'Unnamed Monitor'),
-                    'url': monitor.get('url', ''),
                     'status': get_status_text(monitor.get('status')),
-                    'uptime': float(monitor.get('all_time_uptime_ratio', 0)),
+                    'uptime': float(monitor.get('custom_uptime_ratio', '0').split('-')[0]),
                     'last_check': format_timestamp(monitor.get('last_check', 0)),
-                    'status_class': get_status_class(monitor.get('status'))
+                    'custom_uptime_ranges': uptime_ranges
                 }
                 processed_monitors.append(processed_monitor)
             except Exception as e:
@@ -96,19 +105,26 @@ def fetch_monitor_detail(api_key, monitor_id):
 
         monitor = data['monitors'][0]
 
+        # Get custom uptime ratios
+        custom_ratios = monitor.get('custom_uptime_ratio', '').split('-')
+        uptime_ranges = {
+            '1': float(custom_ratios[0]) if len(custom_ratios) > 0 else 0.000,
+            '7': float(custom_ratios[1]) if len(custom_ratios) > 1 else 0.000,
+            '30': float(custom_ratios[2]) if len(custom_ratios) > 2 else 0.000,
+            '90': float(custom_ratios[3]) if len(custom_ratios) > 3 else 0.000
+        }
+
         # Process monitor data
         monitor_data = {
             'id': monitor.get('id'),
-            'name': monitor.get('friendly_name', 'Unnamed Monitor'),
-            'url': monitor.get('url', ''),
             'status': get_status_text(monitor.get('status')),
-            'uptime': float(monitor.get('all_time_uptime_ratio', 0)),
+            'uptime': float(monitor.get('custom_uptime_ratio', '0').split('-')[0]),
             'last_check': format_timestamp(monitor.get('last_check', 0)),
-            'custom_uptime_ranges': process_uptime_ranges(monitor.get('custom_uptime_ranges', '')),
+            'custom_uptime_ranges': uptime_ranges,
             'response_times': process_response_times(monitor.get('response_times', []))
         }
 
-        # Process events using the new function
+        # Process events
         events = process_events(monitor.get('logs', []))
 
         return {
@@ -122,24 +138,6 @@ def fetch_monitor_detail(api_key, monitor_id):
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         raise
-
-def process_uptime_ranges(ranges_str):
-    """Process custom uptime ranges string"""
-    if not ranges_str:
-        return {
-            '1': 0.00,
-            '7': 0.00,
-            '30': 0.00,
-            '90': 0.00
-        }
-
-    ranges = ranges_str.split('-')
-    return {
-        '1': float(ranges[0]) if len(ranges) > 0 else 0.00,
-        '7': float(ranges[1]) if len(ranges) > 1 else 0.00,
-        '30': float(ranges[2]) if len(ranges) > 2 else 0.00,
-        '90': float(ranges[3]) if len(ranges) > 3 else 0.00
-    }
 
 def process_response_times(response_times):
     """Process response times array"""
@@ -196,28 +194,21 @@ def process_events(logs):
             'type': 'up' if log.get('type') == 2 else 'down',
             'title': 'Running again' if log.get('type') == 2 else 'Down',
             'timestamp': format_timestamp(log.get('datetime')),
-            'details': log.get('reason') if log.get('reason') else None
+            'duration': None
         }
 
         # Calculate duration for down events
-        if event['type'] == 'down':
-            # Find the next 'up' event or use current time
-            current_time = int(datetime.now().timestamp())
-            next_up_time = None
-
-            # Look for next 'Running again' event
-            for next_log in logs[i+1:]:
-                if next_log.get('type') == 2:  # Up event
-                    next_up_time = next_log.get('datetime')
-                    break
-
+        if event['type'] == 'down' and i < len(logs) - 1:
             down_time = log.get('datetime')
-            end_time = next_up_time if next_up_time else current_time
+            up_time = next((l.get('datetime') for l in logs[i+1:] if l.get('type') == 2), None)
 
-            # Calculate duration in seconds
-            if end_time and down_time:
-                duration_seconds = end_time - down_time
-                event['duration'] = duration_seconds if duration_seconds > 0 else 0
+            if up_time and down_time:
+                duration_minutes = (up_time - down_time) // 60  # Convert seconds to minutes
+                event['duration'] = f"{duration_minutes} min" if duration_minutes < 60 else f"{duration_minutes // 60}h {duration_minutes % 60}min"
+
+        # Add reason if available
+        if log.get('reason'):
+            event['details'] = log.get('reason')
 
         events.append(event)
     return events
