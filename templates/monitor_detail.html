@@ -91,7 +91,6 @@
                             <h2 class="h5 mb-4">Recent events</h2>
                             <div class="recent-events">
                                 {% for event in events %}
-                                {% set next_event = events[loop.index0 + 1] if not loop.last else None %}
                                 <div class="event-item mb-4">
                                     <div class="d-flex align-items-start">
                                         <span class="event-icon {{ 'text-success' if event.type == 'up' else 'text-danger' }} me-3">
@@ -105,18 +104,21 @@
                                         </span>
                                         <div>
                                             <h3 class="h6 mb-1">
-                                                {% if event.details and 'Monitor started' in event.details %}
-                                                    Monitor started
-                                                {% elif event.type == 'down' %}
-                                                    {% set duration = (next_event.timestamp|parse_datetime - event.timestamp|parse_datetime) if next_event else (now - event.timestamp|parse_datetime) %}
-                                                    Down for {{ (duration / 3600)|int }}h, {{ ((duration % 3600) / 60)|int }}min
-                                                {% else %}
+                                                {% if event.title == 'Running again' %}
                                                     Running again
+                                                {% elif event.title.startswith('Monitor') %}
+                                                    Monitor started
+                                                {% else %}
+                                                    {% if event.duration %}
+                                                        Down for {{ (event.duration / 60) | int }}h, {{ event.duration % 60 }}min
+                                                    {% else %}
+                                                        Down
+                                                    {% endif %}
                                                 {% endif %}
                                             </h3>
-                                            <p class="text-muted small mb-0">{{ event.timestamp.split(':')[0] }}:{{ event.timestamp.split(':')[1] }} GMT +00:00</p>
-                                            {% if event.details and event.type == 'down' and 'Connection Timeout' in event.details %}
-                                                <p class="mb-0 mt-2">The reason was Connection Timeout.<br>Details: The response took so long that the connection timed out.</p>
+                                            <p class="text-muted small mb-0">{{ event.timestamp }}</p>
+                                            {% if event.details and event.type == 'down' %}
+                                                <p class="mb-0 mt-2">{{ event.details }}</p>
                                             {% endif %}
                                         </div>
                                     </div>

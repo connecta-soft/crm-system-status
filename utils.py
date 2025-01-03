@@ -7,7 +7,9 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 def fetch_monitor_data(api_key):
-    """Fetch monitor data from UptimeRobot API"""
+    """
+    Fetch monitor data from UptimeRobot API
+    """
     if not api_key:
         raise ValueError("API key not configured")
 
@@ -29,6 +31,7 @@ def fetch_monitor_data(api_key):
         response.raise_for_status()
         data = response.json()
 
+        # Log the response for debugging
         logger.debug(f"API Response: {data}")
 
         if not data.get('monitors'):
@@ -61,7 +64,9 @@ def fetch_monitor_data(api_key):
         raise
 
 def fetch_monitor_detail(api_key, monitor_id):
-    """Fetch detailed monitor data including response times and events"""
+    """
+    Fetch detailed monitor data including response times and events
+    """
     if not api_key:
         raise ValueError("API key not configured")
 
@@ -86,8 +91,6 @@ def fetch_monitor_detail(api_key, monitor_id):
         response.raise_for_status()
         data = response.json()
 
-        logger.debug(f"Monitor detail API Response: {data}")
-
         if not data.get('monitors') or len(data['monitors']) == 0:
             raise ValueError(f"Monitor {monitor_id} not found")
 
@@ -101,25 +104,21 @@ def fetch_monitor_detail(api_key, monitor_id):
             'status': get_status_text(monitor.get('status')),
             'uptime': float(monitor.get('all_time_uptime_ratio', 0)),
             'last_check': format_timestamp(monitor.get('last_check', 0)),
-            'custom_uptime_ranges': process_uptime_ranges(monitor.get('custom_uptime_ratios', '')),
+            'custom_uptime_ranges': process_uptime_ranges(monitor.get('custom_uptime_ranges', '')),
             'response_times': process_response_times(monitor.get('response_times', []))
         }
 
         # Process events
         events = []
         for log in monitor.get('logs', []):
-            try:
-                event = {
-                    'type': 'up' if log.get('type') == 2 else 'down',
-                    'title': 'Running again' if log.get('type') == 2 else 'Down',
-                    'timestamp': format_timestamp(log.get('datetime')),
-                    'duration': log.get('duration'),
-                    'details': log.get('reason', {}).get('detail') if isinstance(log.get('reason'), dict) else log.get('reason')
-                }
-                events.append(event)
-            except Exception as e:
-                logger.error(f"Error processing event: {str(e)}")
-                continue
+            event = {
+                'type': 'up' if log.get('type') == 2 else 'down',
+                'title': 'Running again' if log.get('type') == 2 else 'Down',
+                'timestamp': format_timestamp(log.get('datetime')),
+                'duration': log.get('duration'),
+                'details': log.get('reason') if log.get('reason') else None
+            }
+            events.append(event)
 
         return {
             'monitor': monitor_data,
@@ -135,16 +134,7 @@ def fetch_monitor_detail(api_key, monitor_id):
 
 def process_uptime_ranges(ranges_str):
     """Process custom uptime ranges string"""
-    try:
-        ranges = ranges_str.split('-')
-        return {
-            '1': float(ranges[0]) if len(ranges) > 0 else 100.00,
-            '7': float(ranges[1]) if len(ranges) > 1 else 100.00,
-            '30': float(ranges[2]) if len(ranges) > 2 else 100.00,
-            '90': float(ranges[3]) if len(ranges) > 3 else 100.00
-        }
-    except Exception as e:
-        logger.error(f"Error processing uptime ranges: {str(e)}")
+    if not ranges_str:
         return {
             '1': 100.00,
             '7': 100.00,
@@ -152,32 +142,31 @@ def process_uptime_ranges(ranges_str):
             '90': 100.00
         }
 
+    ranges = ranges_str.split('-')
+    return {
+        '1': float(ranges[0]) if len(ranges) > 0 else 100.00,
+        '7': float(ranges[1]) if len(ranges) > 1 else 100.00,
+        '30': float(ranges[2]) if len(ranges) > 2 else 100.00,
+        '90': float(ranges[3]) if len(ranges) > 3 else 100.00
+    }
+
 def process_response_times(response_times):
     """Process response times array"""
-    try:
-        if not response_times:
-            return {
-                'avg': 0,
-                'min': 0,
-                'max': 0,
-                'data': []
-            }
-
-        times = [rt.get('value', 0) for rt in response_times]
-        return {
-            'avg': sum(times) / len(times) if times else 0,
-            'min': min(times) if times else 0,
-            'max': max(times) if times else 0,
-            'data': [{'timestamp': rt.get('datetime'), 'value': rt.get('value')} for rt in response_times]
-        }
-    except Exception as e:
-        logger.error(f"Error processing response times: {str(e)}")
+    if not response_times:
         return {
             'avg': 0,
             'min': 0,
             'max': 0,
             'data': []
         }
+
+    times = [rt.get('value', 0) for rt in response_times]
+    return {
+        'avg': sum(times) / len(times) if times else 0,
+        'min': min(times) if times else 0,
+        'max': max(times) if times else 0,
+        'data': [{'timestamp': rt.get('datetime'), 'value': rt.get('value')} for rt in response_times]
+    }
 
 def get_status_text(status_code):
     """Convert status code to readable text"""
@@ -205,6 +194,5 @@ def format_timestamp(timestamp):
     """Format Unix timestamp to readable date"""
     try:
         return datetime.fromtimestamp(int(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
-    except (ValueError, TypeError) as e:
-        logger.error(f"Error formatting timestamp {timestamp}: {str(e)}")
-        return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    except (ValueError, TypeError):
+        return "N/A"
