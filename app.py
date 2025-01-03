@@ -1,7 +1,7 @@
 import os
 import logging
 from datetime import datetime
-from flask import Flask, render_template, jsonify, make_response
+from flask import Flask, render_template, jsonify
 from flask_cors import CORS
 from utils import fetch_monitor_data, fetch_monitor_detail
 
@@ -27,7 +27,8 @@ def parse_datetime(value):
     try:
         return datetime.strptime(value, '%Y-%m-%d %H:%M:%S').timestamp()
     except (ValueError, TypeError):
-        return 0
+        logger.error(f"Error parsing datetime: {value}")
+        return datetime.now().timestamp()
 
 @app.route('/')
 def index():
@@ -43,13 +44,19 @@ def index():
 def monitor_detail(monitor_id):
     """Render the detailed monitor view."""
     try:
+        logger.debug(f"Fetching details for monitor ID: {monitor_id}")
         monitor_data = fetch_monitor_detail(UPTIMEROBOT_API_KEY, monitor_id)
+
+        if not monitor_data:
+            logger.error("No monitor data returned")
+            return render_template('monitor_detail.html', error="Unable to fetch monitor details", now=datetime.now())
+
         return render_template('monitor_detail.html', 
                              monitor=monitor_data['monitor'],
                              events=monitor_data['events'],
                              now=datetime.now().timestamp())
     except Exception as e:
-        logger.error(f"Error fetching monitor detail: {str(e)}")
+        logger.error(f"Error in monitor_detail route: {str(e)}")
         return render_template('monitor_detail.html', error="Unable to fetch monitor details", now=datetime.now())
 
 @app.route('/api/monitors')
@@ -75,8 +82,8 @@ def get_monitor_detail(monitor_id):
 # Error handlers
 @app.errorhandler(404)
 def not_found_error(error):
-    return render_template('index.html', error="Page not found", now=datetime.now()), 404
+    return render_template('monitor_detail.html', error="Page not found", now=datetime.now()), 404
 
 @app.errorhandler(500)
 def internal_error(error):
-    return render_template('index.html', error="Internal server error", now=datetime.now()), 500
+    return render_template('monitor_detail.html', error="Internal server error", now=datetime.now()), 500
