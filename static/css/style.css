@@ -1,6 +1,6 @@
 /* Base styles */
 body {
-    background-color: #f8f9fa;
+    background-color: #eaf2f8;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -22,7 +22,8 @@ body {
 }
 
 .no-outline:hover {
-    border: 1px solid #dee2e6 !important;
+    border: 1px solid #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Overall status styles */
@@ -106,14 +107,14 @@ body {
 }
 
 .service-header {
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #ffffff;
     padding-bottom: 1rem;
 }
 
 .status-divider {
     width: 1px;
     height: 21px;
-    background-color: #e9ecef;
+    background-color: #ffffff;
 }
 
 .uptime-percentage {
@@ -135,7 +136,7 @@ body {
 .status-text {
     color: #3bd671;
     font-weight: 500;
-    text-align: center; /* Center alignment of status text */
+    text-align: center;
 }
 
 .status-text.text-danger {
@@ -165,11 +166,22 @@ canvas.uptime-chart {
 }
 
 .monitor-detail .vr {
-    opacity: 0.1;
+    opacity: 0.8;
+    background-color: #ffffff;
 }
 
 .monitor-detail .row.g-4 {
     row-gap: 2rem !important;
+}
+
+/* Back button styles */
+.back-button {
+    border: 1px solid #ffffff;
+}
+
+.back-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #ffffff;
 }
 
 /* Responsive adjustments */
@@ -200,13 +212,7 @@ canvas.uptime-chart {
     margin-top: auto;
 }
 
-/* Back button hover state */
-.back-button:hover {
-    background-color: #e9ecef; /*Example hover color, adjust as needed*/
-    cursor: pointer;
-}
-
-/* Consistent gaps between sections */
+/* Section gaps */
 section {
-    margin-bottom: 2rem; /* Example gap size, adjust as needed */
+    margin-bottom: 2rem;
 }

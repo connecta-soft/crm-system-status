@@ -91,6 +91,7 @@
                             <h2 class="h5 mb-4">Recent events</h2>
                             <div class="recent-events">
                                 {% for event in events %}
+                                {% set next_event = events[loop.index0 + 1] if not loop.last else None %}
                                 <div class="event-item mb-4">
                                     <div class="d-flex align-items-start">
                                         <span class="event-icon {{ 'text-success' if event.type == 'up' else 'text-danger' }} me-3">
@@ -104,21 +105,18 @@
                                         </span>
                                         <div>
                                             <h3 class="h6 mb-1">
-                                                {% if event.title == 'Running again' %}
-                                                    Running again
-                                                {% elif event.title.startswith('Monitor') %}
+                                                {% if event.details and 'Monitor started' in event.details %}
                                                     Monitor started
+                                                {% elif event.type == 'down' %}
+                                                    {% set duration = next_event.timestamp|string|strptime('%Y-%m-%d %H:%M:%S')|int - event.timestamp|string|strptime('%Y-%m-%d %H:%M:%S')|int if next_event else now|int - event.timestamp|string|strptime('%Y-%m-%d %H:%M:%S')|int %}
+                                                    Down for {{ (duration / 3600)|int }}h, {{ ((duration % 3600) / 60)|int }}min
                                                 {% else %}
-                                                    {% if event.duration %}
-                                                        Down for {{ (event.duration / 60) | int }}h, {{ event.duration % 60 }}min
-                                                    {% else %}
-                                                        Down
-                                                    {% endif %}
+                                                    Running again
                                                 {% endif %}
                                             </h3>
-                                            <p class="text-muted small mb-0">{{ event.timestamp }}</p>
-                                            {% if event.details and event.type == 'down' %}
-                                                <p class="mb-0 mt-2">{{ event.details }}</p>
+                                            <p class="text-muted small mb-0">{{ event.timestamp.split('.')[0] }} GMT +00:00</p>
+                                            {% if event.details and event.type == 'down' and 'Connection Timeout' in event.details %}
+                                                <p class="mb-0 mt-2">The reason was Connection Timeout.<br>Details: The response took so long that the connection timed out.</p>
                                             {% endif %}
                                         </div>
                                     </div>
