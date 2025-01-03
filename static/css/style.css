@@ -26,53 +26,73 @@ body {
 }
 
 /* Service card styles */
-.services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
+.monitor-card {
+    margin-bottom: 1.5rem;
 }
 
 .monitor-card .card {
-    height: 100%;
     border: none;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s;
-}
-
-.monitor-card .card:hover {
-    transform: translateY(-2px);
 }
 
 .service-header {
-    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #eee;
 }
 
-.status-badge {
-    padding: 0.5rem 1rem;
+.service-name {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #333;
+}
+
+.service-uptime {
+    color: #3bd671;
     font-weight: 500;
 }
 
-.uptime-percentage {
-    text-align: right;
+.service-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #3bd671;
 }
 
-.uptime-percentage small {
-    display: block;
-    font-size: 0.75rem;
+.live-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #3bd671;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.95);
+        opacity: 0.5;
+    }
 }
 
 .uptime-graph {
     margin: 1rem 0;
-    height: 60px;
+    height: 40px;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .services-grid {
-        grid-template-columns: 1fr;
-    }
-
     .header h1 {
         font-size: 1.5rem;
     }
@@ -82,13 +102,6 @@ body {
     }
 }
 
-/* Status colors */
-.bg-success { background-color: #28a745 !important; }
-.bg-danger { background-color: #dc3545 !important; }
-.bg-warning { background-color: #ffc107 !important; }
-.bg-info { background-color: #17a2b8 !important; }
-.bg-secondary { background-color: #6c757d !important; }
-
 /* Footer styles */
 .footer {
     background-color: #f8f9fa;
@@ -96,3 +109,10 @@ body {
     padding: 1rem 0;
     margin-top: auto;
 }
+
+/* Status colors */
+.bg-success { background-color: #28a745 !important; }
+.bg-danger { background-color: #dc3545 !important; }
+.bg-warning { background-color: #ffc107 !important; }
+.bg-info { background-color: #17a2b8 !important; }
+.bg-secondary { background-color: #6c757d !important; }

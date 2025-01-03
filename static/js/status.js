@@ -18,16 +18,28 @@ function initializeUptimeCharts() {
         const ctx = canvas.getContext('2d');
         const monitorId = canvas.dataset.monitorId;
 
+        // Generate sample data for 2 months (60 days)
+        const data = Array(60).fill(null).map(() => 
+            Math.random() > 0.1 ? 100 : null
+        );
+
         charts[monitorId] = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: Array(24).fill(''),
+                labels: Array(60).fill('').map((_, i) => {
+                    const d = new Date();
+                    d.setDate(d.getDate() - (59 - i));
+                    return d;
+                }),
                 datasets: [{
-                    data: Array(24).fill(100),
-                    backgroundColor: '#28a745',
+                    data: data,
+                    backgroundColor: '#3bd671',
                     borderWidth: 0,
-                    barPercentage: 0.8,
-                    categoryPercentage: 0.9
+                    barPercentage: 1,
+                    categoryPercentage: 1,
+                    backgroundColor: data.map(value => 
+                        value === null ? '#e9ecef' : '#3bd671'
+                    )
                 }]
             },
             options: {
@@ -38,7 +50,32 @@ function initializeUptimeCharts() {
                         display: false
                     },
                     tooltip: {
-                        enabled: false
+                        enabled: true,
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const date = new Date(tooltipItems[0].label);
+                                return date.toLocaleDateString('en-US', {
+                                    month: 'short',
+                                    day: 'numeric'
+                                });
+                            },
+                            label: function(context) {
+                                const value = context.raw;
+                                return value === null ? 'No records' : `${value}% operational`;
+                            }
+                        },
+                        displayColors: false,
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 10,
+                        titleFont: {
+                            size: 13,
+                            weight: 'bold'
+                        },
+                        bodyFont: {
+                            size: 12
+                        }
                     }
                 },
                 scales: {
@@ -100,14 +137,9 @@ function updateMonitorCards(monitors) {
     monitors.forEach(monitor => {
         const card = document.querySelector(`[data-monitor-id="${monitor.id}"]`);
         if (card) {
-            // Update status badge
-            const badge = card.querySelector('.status-badge');
-            badge.className = `status-badge badge bg-${monitor.status_class}`;
-            badge.textContent = monitor.status;
-
             // Update uptime percentage
-            const uptimeValue = card.querySelector('.uptime-percentage .h4');
-            uptimeValue.textContent = `${monitor.uptime.toFixed(2)}%`;
+            const uptimeElement = card.querySelector('.service-uptime');
+            uptimeElement.textContent = `${monitor.uptime.toFixed(3)}%`;
         }
     });
 }
