@@ -39,7 +39,7 @@ function initializeUptimeCharts() {
         // Get November 28th date
         const nov28 = new Date(today.getFullYear(), 10, 28); // Month is 0-based, so 10 is November
 
-        // Generate sample data
+        // Generate sample data for last 90 days
         const data = Array(90).fill(null).map((_, i) => {
             const date = new Date(today);
             date.setDate(date.getDate() - (90 - i));
@@ -53,7 +53,7 @@ function initializeUptimeCharts() {
             }
 
             return {
-                value: Math.random() > 0.95 ? 0 : 100, // 5% chance of downtime
+                value: 95 + (Math.random() * 5), // Generate values between 95-100%
                 date: date
             };
         });
@@ -70,7 +70,7 @@ function initializeUptimeCharts() {
                         if (date < nov28) {
                             return '#e9ecef'; // Gray for dates before November 28th
                         }
-                        return value === 0 ? '#dc3545' : '#3bd671';
+                        return value < 95 ? '#dc3545' : '#3bd671'; // Red if below 95%, green otherwise
                     },
                     borderRadius: 4,
                     borderWidth: 0,
@@ -86,7 +86,22 @@ function initializeUptimeCharts() {
                         display: false
                     },
                     tooltip: {
-                        enabled: false
+                        enabled: true,
+                        position: 'nearest',
+                        yAlign: 'bottom',
+                        xAlign: 'center',
+                        callbacks: {
+                            label: function(context) {
+                                return `Uptime: ${context.raw.toFixed(3)}%`;
+                            },
+                            title: function(context) {
+                                const date = new Date(context[0].label);
+                                return date.toLocaleDateString();
+                            }
+                        },
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 10,
+                        displayColors: false
                     }
                 },
                 scales: {
