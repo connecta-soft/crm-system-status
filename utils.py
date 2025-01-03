@@ -175,12 +175,19 @@ def process_events(logs):
         if event['type'] == 'down':
             down_time = log.get('datetime')
             # Find next up event or use current time
-            up_time = next(
-                (l.get('datetime') for l in logs[i+1:] if l.get('type') == 2),
-                current_time
-            )
+            up_time = None
 
-            if up_time and down_time:
+            # Look for next 'up' event in subsequent logs
+            for next_log in logs[i+1:]:
+                if next_log.get('type') == 2:  # Up event
+                    up_time = next_log.get('datetime')
+                    break
+
+            # If no 'up' event found, use current time
+            if up_time is None:
+                up_time = current_time
+
+            if down_time:
                 duration_minutes = int((up_time - down_time) / 60)
                 event['duration'] = calculate_duration_text(duration_minutes)
 
@@ -206,8 +213,14 @@ def get_event_title(event_type):
 
 def calculate_duration_text(minutes):
     """Calculate human-readable duration text"""
-    if minutes < 60:
+    # Handle negative or zero duration
+    minutes = max(0, abs(minutes))
+
+    if minutes == 0:
+        return "0h, 0min"
+    elif minutes < 60:
         return f"{minutes} min"
+
     hours = minutes // 60
     remaining_minutes = minutes % 60
     return f"{hours}h, {remaining_minutes}min"
