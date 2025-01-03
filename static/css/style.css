@@ -1,4 +1,116 @@
 body {
+    background-color: #1a1d21;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar {
+    background-color: #1a1d21 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.container {
+    max-width: 1000px;
+}
+
+.status-overview {
+    padding: 20px 0;
+}
+
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 24px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.status-indicator.up .status-dot {
+    background-color: #4caf50;
+}
+
+.status-indicator.down .status-dot {
+    background-color: #f44336;
+}
+
+.monitor-row {
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.monitor-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.monitor-name {
+    font-size: 0.9rem;
+    margin-left: 8px;
+}
+
+.uptime-percentage {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+}
+
+.timeline-container {
+    overflow-x: auto;
+}
+
+.timeline {
+    display: flex;
+    gap: 1px;
+    min-width: 100%;
+    height: 8px;
+}
+
+.timeline-segment {
+    flex: 1;
+    height: 100%;
+    min-width: 3px;
+}
+
+.timeline-segment.up {
+    background-color: #4caf50;
+}
+
+.timeline-segment.down {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.footer {
+    margin-top: auto;
+    padding: 20px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.text-muted {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+@media (max-width: 768px) {
+    .monitor-info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .timeline {
+        margin-top: 10px;
+    }
+}
+
+body {
     background-color: #f8f9fa;
     min-height: 100vh;
     display: flex;
@@ -41,7 +153,7 @@ body {
         margin-bottom: 10px;
         text-align: center;
     }
-    
+
     .monitor-card .card-body .row > div:last-child {
         margin-bottom: 0;
     }

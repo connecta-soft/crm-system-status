@@ -1,7 +1,19 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Update monitor data every 60 seconds
     setInterval(updateMonitors, 60000);
+    // Update countdown every second
+    setInterval(updateCountdown, 1000);
+
+    let countdown = 60;
 });
+
+function updateCountdown() {
+    countdown = countdown > 0 ? countdown - 1 : 60;
+    const countdownElement = document.getElementById('next-update-countdown');
+    if (countdownElement) {
+        countdownElement.textContent = countdown;
+    }
+}
 
 function updateMonitors() {
     fetch('/api/monitors')
@@ -9,7 +21,7 @@ function updateMonitors() {
         .then(data => {
             if (data.success) {
                 updateMonitorCards(data.data);
-                updateLastUpdateTime();
+                countdown = 60;
             } else {
                 console.error('Error fetching monitor data:', data.error);
             }
@@ -21,29 +33,26 @@ function updateMonitors() {
 
 function updateMonitorCards(monitors) {
     const container = document.getElementById('monitors-container');
-    
+
     monitors.forEach(monitor => {
-        const card = container.querySelector(`[data-monitor-id="${monitor.id}"]`);
-        if (card) {
-            // Update status badge
-            const badge = card.querySelector('.badge');
-            badge.className = `badge bg-${monitor.status_class}`;
-            badge.textContent = monitor.status;
+        const row = container.querySelector(`[data-monitor-id="${monitor.id}"]`);
+        if (row) {
+            // Update status dot
+            const statusDot = row.querySelector('.status-dot');
+            statusDot.className = `status-dot ${monitor.status === 'Up' ? 'bg-success' : 'bg-danger'}`;
 
-            // Update uptime
-            const uptimeValue = card.querySelector('.uptime-value');
-            uptimeValue.textContent = `${monitor.uptime.toFixed(2)}%`;
+            // Update uptime percentage
+            const uptimeElement = row.querySelector('.uptime-percentage');
+            uptimeElement.textContent = `${monitor.uptime.toFixed(3)}%`;
 
-            // Update last check time
-            const lastCheckValue = card.querySelector('.last-check-value');
-            lastCheckValue.textContent = monitor.last_check;
+            // Update timeline segments
+            const timeline = row.querySelector('.timeline');
+            if (timeline) {
+                const segments = timeline.querySelectorAll('.timeline-segment');
+                segments.forEach(segment => {
+                    segment.className = `timeline-segment ${monitor.status === 'Up' ? 'up' : 'down'}`;
+                });
+            }
         }
     });
-}
-
-function updateLastUpdateTime() {
-    const lastUpdate = document.getElementById('last-update');
-    if (lastUpdate) {
-        lastUpdate.textContent = new Date().toLocaleString();
-    }
 }

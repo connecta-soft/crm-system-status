@@ -1,5 +1,5 @@
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 
 # Configure logging
@@ -23,7 +23,8 @@ def fetch_monitor_data(api_key):
         "format": "json",
         "all_time_uptime_ratio": "1",
         "response_times": "1",
-        "response_times_limit": "1"
+        "response_times_limit": "1",
+        "custom_uptime_ranges": generate_daily_ranges(90)  # Get 90 days of data
     }
 
     try:
@@ -48,7 +49,8 @@ def fetch_monitor_data(api_key):
                     'status': get_status_text(monitor.get('status')),
                     'uptime': float(monitor.get('all_time_uptime_ratio', 0)),
                     'last_check': format_timestamp(monitor.get('last_check', 0)),
-                    'status_class': get_status_class(monitor.get('status'))
+                    'status_class': get_status_class(monitor.get('status')),
+                    'daily_status': get_daily_status(monitor.get('custom_uptime_ranges', ''))
                 }
                 processed_monitors.append(processed_monitor)
             except Exception as e:
@@ -62,6 +64,31 @@ def fetch_monitor_data(api_key):
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         raise
+
+def generate_daily_ranges(days):
+    """Generate custom uptime ranges for the specified number of days"""
+    ranges = []
+    end_date = datetime.now()
+    for i in range(days):
+        start_date = end_date - timedelta(days=1)
+        ranges.append(f"{int(start_date.timestamp())}-{int(end_date.timestamp())}")
+        end_date = start_date
+    return "_".join(ranges)
+
+def get_daily_status(custom_ranges):
+    """Convert custom uptime ranges to daily status"""
+    if not custom_ranges:
+        return ['down'] * 90
+
+    daily_status = []
+    for uptime in custom_ranges.split('_'):
+        try:
+            uptime_value = float(uptime)
+            daily_status.append('up' if uptime_value >= 99.9 else 'down')
+        except ValueError:
+            daily_status.append('down')
+
+    return daily_status
 
 def get_status_text(status_code):
     """Convert status code to readable text"""
