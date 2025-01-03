@@ -23,7 +23,27 @@
             </div>
 
             <div class="row g-4">
-                <!-- Uptime Cards -->
+                <!-- Uptime Chart -->
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h2 class="h5 mb-0">System {{ monitor.id | string | zfill(2) }}</h2>
+                                <span class="uptime-percentage {% if monitor.uptime == 0.000 %}text-danger{% endif %}">
+                                    {{ "%.3f"|format(monitor.uptime) }}%
+                                </span>
+                            </div>
+                            <div class="uptime-graph" style="height: 100px;">
+                                <canvas class="uptime-chart" 
+                                    data-monitor-id="{{ monitor.id }}" 
+                                    data-status="{{ 'up' if monitor.status == 'Up' else 'down' }}">
+                                </canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Overall Uptime -->
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">

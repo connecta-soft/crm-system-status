@@ -58,29 +58,14 @@ function initializeUptimeCharts() {
         const threeMonthsAgo = new Date(today);
         threeMonthsAgo.setMonth(today.getMonth() - 3);
 
-        // Generate sample data for last 90 days
+        // Generate data for last 90 days
         const data = Array(90).fill(null).map((_, i) => {
             const date = new Date(today);
             date.setDate(date.getDate() - (90 - i));
-
-            if (isUp) {
-                // Set specific value for January 1st, 2025
-                if (date.getMonth() === 0 && date.getDate() === 1 && date.getFullYear() === 2025) {
-                    return {
-                        value: 89.272,
-                        date: date
-                    };
-                }
-                return {
-                    value: 95 + (Math.random() * 5), // Generate values between 95-100%
-                    date: date
-                };
-            } else {
-                return {
-                    value: 0, // 0% for down systems
-                    date: date
-                };
-            }
+            return {
+                value: isUp ? (Math.random() * 5 + 95) : 0, // 95-100% for up systems, 0% for down
+                date: date
+            };
         });
 
         charts[monitorId] = new Chart(ctx, {
@@ -88,14 +73,14 @@ function initializeUptimeCharts() {
             data: {
                 labels: data.map(d => d.date),
                 datasets: [{
-                    data: data.map(d => ({ x: d.date, y: 100 })), // Set all bars to full height
-                    backgroundColor: isUp ?
+                    data: data.map(d => ({ x: d.date, y: d.value })),
+                    backgroundColor: isUp ? 
                         data.map(d => d.value >= 95 ? '#3bd671' : '#dc3545') : // Green for >=95%, red for <95%
-                        '#e9ecef', // Light gray for down systems
+                        '#dc3545', // Red for down systems
                     borderWidth: 0,
-                    barPercentage: 0.8,
-                    categoryPercentage: 0.9,
-                    borderRadius: 4
+                    barPercentage: 1,
+                    categoryPercentage: 1,
+                    borderRadius: 0
                 }]
             },
             options: {
@@ -109,35 +94,33 @@ function initializeUptimeCharts() {
                         enabled: true,
                         mode: 'index',
                         intersect: false,
-                        position: 'nearest',
-                        yAlign: 'bottom',
-                        xAlign: 'center',
                         callbacks: {
                             label: function(context) {
-                                const value = isUp ? data[context.dataIndex].value : 0;
-                                const displayValue = value >= 95 ? 100 : value;
-                                return `Uptime: ${displayValue.toFixed(3)}%`;
+                                return `Uptime: ${context.raw.y.toFixed(3)}%`;
                             },
                             title: function(context) {
-                                const date = new Date(context[0].label);
-                                return date.toLocaleDateString();
+                                return new Date(context[0].label).toLocaleDateString();
                             }
                         },
                         backgroundColor: 'rgba(0, 0, 0, 0.8)',
                         padding: 10,
-                        displayColors: false,
-                        caretPadding: 15,
-                        caretSize: 0
+                        displayColors: false
                     }
                 },
                 scales: {
                     x: {
-                        display: false
+                        display: false,
+                        grid: {
+                            display: false
+                        }
                     },
                     y: {
                         display: false,
                         min: 0,
-                        max: 100
+                        max: 100,
+                        grid: {
+                            display: false
+                        }
                     }
                 },
                 animation: false
