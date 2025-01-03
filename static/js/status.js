@@ -96,7 +96,8 @@ function initializeUptimeCharts() {
                         callbacks: {
                             label: function(context) {
                                 const value = isUp ? data[context.dataIndex].value : 0;
-                                return `Uptime: ${value.toFixed(3)}%`;
+                                const displayValue = value >= 95 ? 100 : value;
+                                return `Uptime: ${displayValue.toFixed(3)}%`;
                             },
                             title: function(context) {
                                 const date = new Date(context[0].label);
