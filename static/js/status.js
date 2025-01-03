@@ -40,6 +40,15 @@ function initializeUptimeCharts() {
         const data = Array(90).fill(null).map((_, i) => {
             const date = new Date(today);
             date.setDate(date.getDate() - (90 - i));
+
+            // Set specific value for January 1st
+            if (date.getMonth() === 0 && date.getDate() === 1) {
+                return {
+                    value: 89.272,
+                    date: date
+                };
+            }
+
             return {
                 value: Math.random() > 0.95 ? 0 : 100, // 5% chance of downtime
                 date: date
@@ -78,12 +87,25 @@ function initializeUptimeCharts() {
                         xAlign: 'center',
                         callbacks: {
                             label: function(context) {
-                                return context.raw === 0 ? 'Downtime' : 'Operational';
+                                const value = context.raw;
+                                if (value === 0) return 'Downtime';
+                                if (value === 100) return 'Operational';
+                                return `Uptime: ${value.toFixed(3)}%`;
                             },
                             title: function(context) {
                                 const date = new Date(context[0].label);
                                 return date.toLocaleDateString();
                             }
+                        },
+                        external: function(context) {
+                            // Ensure tooltip is always fully visible
+                            const tooltipEl = context.tooltip;
+                            const position = context.chart.canvas.getBoundingClientRect();
+
+                            // Adjust position to ensure tooltip is fully visible
+                            tooltipEl.style.position = 'absolute';
+                            tooltipEl.style.left = position.left + window.pageXOffset + tooltipEl.offsetWidth / 2 + 'px';
+                            tooltipEl.style.top = position.top + window.pageYOffset - tooltipEl.offsetHeight - 10 + 'px';
                         }
                     }
                 },
