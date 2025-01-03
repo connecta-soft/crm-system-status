@@ -23,7 +23,6 @@ body {
 
 /* Update status icon and live dot styles */
 .status-icon {
-    font-size: 1.5rem;
     position: relative;
     display: flex;
     align-items: center;
@@ -69,11 +68,6 @@ body {
 .monitor-card .card {
     border: none;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s;
-}
-
-.monitor-card .card:hover {
-    transform: translateY(-2px);
 }
 
 .service-header {
@@ -95,7 +89,7 @@ body {
 
 .service-status {
     display: flex;
-    align-items: center; /* Added for vertical alignment */
+    align-items: center;
 }
 
 .service-status .live-dot {
@@ -140,8 +134,7 @@ canvas.uptime-chart {
 .bg-info { background-color: #17a2b8 !important; }
 .bg-secondary { background-color: #e9ecef !important; }
 
-
-/* Footer styles - Removed branding */
+/* Footer styles */
 .footer {
-    /* Removed content */
+    margin-top: auto;
 }

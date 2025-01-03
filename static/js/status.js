@@ -33,15 +33,16 @@ function initializeUptimeCharts() {
 
         // Calculate dates for the last 3 months
         const today = new Date();
-        const threeMonthsAgo = new Date();
+        const threeMonthsAgo = new Date(today);
         threeMonthsAgo.setMonth(today.getMonth() - 3);
 
-        // Generate sample data with some downtime
-        const data = Array(180).fill(null).map((_, i) => {
-            if (i < 60) return { value: null }; // Pre-data period
+        // Generate sample data
+        const data = Array(90).fill(null).map((_, i) => {
+            const date = new Date(today);
+            date.setDate(date.getDate() - (90 - i));
             return {
                 value: Math.random() > 0.95 ? 0 : 100, // 5% chance of downtime
-                date: new Date(threeMonthsAgo.getTime() + (i * 24 * 60 * 60 * 1000))
+                date: date
             };
         });
 
@@ -53,7 +54,6 @@ function initializeUptimeCharts() {
                     data: data.map(d => d.value),
                     backgroundColor: function(context) {
                         const value = context.raw;
-                        if (value === null) return '#e9ecef';
                         return value === 0 ? '#dc3545' : '#3bd671';
                     },
                     borderRadius: 4,
@@ -65,24 +65,19 @@ function initializeUptimeCharts() {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                layout: {
-                    padding: {
-                        left: 2,
-                        right: 2
-                    }
-                },
                 plugins: {
                     legend: {
                         display: false
                     },
                     tooltip: {
                         enabled: true,
+                        mode: 'index',
+                        intersect: false,
                         position: 'nearest',
                         yAlign: 'bottom',
                         xAlign: 'center',
                         callbacks: {
                             label: function(context) {
-                                if (context.raw === null) return 'No data available';
                                 return context.raw === 0 ? 'Downtime' : 'Operational';
                             },
                             title: function(context) {
