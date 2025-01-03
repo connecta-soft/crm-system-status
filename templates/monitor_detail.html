@@ -10,11 +10,17 @@
             <div class="monitor-detail">
                 <div class="card mb-4">
                     <div class="card-body">
-                        <div class="d-flex align-items-center mb-3">
-                            <span class="live-dot {{ 'bg-success' if monitor.status == 'Up' else 'bg-danger' }}" style="width: 12px; height: 12px;"></span>
-                            <h1 class="h4 mb-0 ms-2">{{ monitor.name }} is {{ 'operational' if monitor.status == 'Up' else 'down' }}</h1>
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="d-flex align-items-center">
+                                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary me-3">
+                                    <i class="fas fa-arrow-left"></i> Back
+                                </a>
+                                <div class="d-flex align-items-center">
+                                    <span class="live-dot {{ 'bg-success' if monitor.status == 'Up' else 'bg-danger' }}" style="width: 12px; height: 12px;"></span>
+                                    <h1 class="h4 mb-0 ms-2">{{ monitor.name }} is {{ 'operational' if monitor.status == 'Up' else 'down' }}</h1>
+                                </div>
+                            </div>
                         </div>
-                        <p class="text-muted mb-0">Checked every 5 minutes</p>
                     </div>
                 </div>
 
@@ -24,30 +30,25 @@
                         <div class="card">
                             <div class="card-body">
                                 <h2 class="h5 mb-4">Overall Uptime</h2>
-                                <div class="row g-4">
-                                    <div class="col-md-3">
-                                        <div class="uptime-stat">
-                                            <h3 class="h6 text-muted mb-1">Last 24 hours</h3>
-                                            <p class="h4 mb-0">100.00%</p>
-                                        </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="uptime-stat" style="flex: 1">
+                                        <h3 class="h6 text-muted mb-1">Last 24 hours</h3>
+                                        <p class="h4 mb-0">{{ monitor.custom_uptime_ranges['1'] }}%</p>
                                     </div>
-                                    <div class="col-md-3">
-                                        <div class="uptime-stat">
-                                            <h3 class="h6 text-muted mb-1">Last 7 days</h3>
-                                            <p class="h4 mb-0">98.47%</p>
-                                        </div>
+                                    <div class="vr mx-4" style="height: 40px;"></div>
+                                    <div class="uptime-stat" style="flex: 1">
+                                        <h3 class="h6 text-muted mb-1">Last 7 days</h3>
+                                        <p class="h4 mb-0">{{ monitor.custom_uptime_ranges['7'] }}%</p>
                                     </div>
-                                    <div class="col-md-3">
-                                        <div class="uptime-stat">
-                                            <h3 class="h6 text-muted mb-1">Last 30 days</h3>
-                                            <p class="h4 mb-0">99.64%</p>
-                                        </div>
+                                    <div class="vr mx-4" style="height: 40px;"></div>
+                                    <div class="uptime-stat" style="flex: 1">
+                                        <h3 class="h6 text-muted mb-1">Last 30 days</h3>
+                                        <p class="h4 mb-0">{{ monitor.custom_uptime_ranges['30'] }}%</p>
                                     </div>
-                                    <div class="col-md-3">
-                                        <div class="uptime-stat">
-                                            <h3 class="h6 text-muted mb-1">Last 90 days</h3>
-                                            <p class="h4 mb-0">99.71%</p>
-                                        </div>
+                                    <div class="vr mx-4" style="height: 40px;"></div>
+                                    <div class="uptime-stat" style="flex: 1">
+                                        <h3 class="h6 text-muted mb-1">Last 90 days</h3>
+                                        <p class="h4 mb-0">{{ monitor.custom_uptime_ranges['90'] }}%</p>
                                     </div>
                                 </div>
                             </div>
@@ -58,28 +59,27 @@
                     <div class="col-12 mb-4">
                         <div class="card">
                             <div class="card-body">
-                                <h2 class="h5 mb-4">Response Time <span class="text-muted">Last 2 days</span></h2>
+                                <div class="d-flex align-items-center mb-4">
+                                    <h2 class="h5 mb-0">Response Time</h2>
+                                    <span class="text-muted ms-2">Last 2 days</span>
+                                </div>
                                 <div class="response-time-chart">
                                     <canvas id="responseTimeChart" height="100"></canvas>
                                 </div>
-                                <div class="row mt-4">
-                                    <div class="col-md-4">
-                                        <div class="response-stat">
-                                            <h3 class="h6 text-muted mb-1">Avg. response time</h3>
-                                            <p class="h4 mb-0">247.88ms</p>
-                                        </div>
+                                <div class="d-flex justify-content-between align-items-center mt-4">
+                                    <div class="response-stat" style="flex: 1">
+                                        <h3 class="h6 text-muted mb-1">Avg. response time</h3>
+                                        <p class="h4 mb-0">{{ "%.2f"|format(monitor.response_times.avg) }}ms</p>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="response-stat">
-                                            <h3 class="h6 text-muted mb-1">Max. response time</h3>
-                                            <p class="h4 mb-0">444.00ms</p>
-                                        </div>
+                                    <div class="vr mx-4" style="height: 40px;"></div>
+                                    <div class="response-stat" style="flex: 1">
+                                        <h3 class="h6 text-muted mb-1">Max. response time</h3>
+                                        <p class="h4 mb-0">{{ "%.2f"|format(monitor.response_times.max) }}ms</p>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="response-stat">
-                                            <h3 class="h6 text-muted mb-1">Min. response time</h3>
-                                            <p class="h4 mb-0">196.00ms</p>
-                                        </div>
+                                    <div class="vr mx-4" style="height: 40px;"></div>
+                                    <div class="response-stat" style="flex: 1">
+                                        <h3 class="h6 text-muted mb-1">Min. response time</h3>
+                                        <p class="h4 mb-0">{{ "%.2f"|format(monitor.response_times.min) }}ms</p>
                                     </div>
                                 </div>
                             </div>
