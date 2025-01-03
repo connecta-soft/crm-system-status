@@ -51,7 +51,10 @@
                             </div>
 
                             <div class="uptime-graph">
-                                <canvas class="uptime-chart" data-monitor-id="{{ monitor.id }}" data-status="{{ 'up' if monitor.status == 'Up' else 'down' }}"></canvas>
+                                <canvas class="uptime-chart" 
+                                        data-monitor-id="{{ monitor.id }}" 
+                                        data-status="{{ 'up' if monitor.status == 'Up' else 'down' }}"
+                                        data-uptimes='{{ monitor.daily_uptimes|tojson }}'></canvas>
                             </div>
                         </div>
                     </div>

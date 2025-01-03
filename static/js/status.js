@@ -33,27 +33,14 @@ document.addEventListener('DOMContentLoaded', function() {
         threeMonthsAgo.setMonth(today.getMonth() - 3);
 
         // Generate data for last 90 days
+        const uptimeData = uptimeChart90Days.dataset.uptimes ? JSON.parse(uptimeChart90Days.dataset.uptimes) : [];
         const data = Array(90).fill(null).map((_, i) => {
             const date = new Date(today);
-            date.setDate(date.getDate() - (90 - i));
-            if (isUp) {
-                // Set specific value for January 1st, 2025
-                if (date.getMonth() === 0 && date.getDate() === 1 && date.getFullYear() === 2025) {
-                    return {
-                        value: 89.272,
-                        date: date
-                    };
-                }
-                return {
-                    value: 100, // Set all other days to 100% for operational systems
-                    date: date
-                };
-            } else {
-                return {
-                    value: 0, // 0% for down systems
-                    date: date
-                };
-            }
+            date.setDate(date.getDate() - (89 - i)); // Count forward from 90 days ago
+            return {
+                date: date,
+                value: uptimeData[i] || 0 // Use actual uptime data or 0 if not available
+            };
         });
 
         new Chart(ctx, {
@@ -154,29 +141,15 @@ function initializeUptimeCharts() {
         const threeMonthsAgo = new Date(today);
         threeMonthsAgo.setMonth(today.getMonth() - 3);
 
-        // Generate sample data for last 90 days
+        // Generate data for last 90 days
+        const uptimeData = canvas.dataset.uptimes ? JSON.parse(canvas.dataset.uptimes) : [];
         const data = Array(90).fill(null).map((_, i) => {
             const date = new Date(today);
-            date.setDate(date.getDate() - (90 - i));
-
-            if (isUp) {
-                // Set specific value for January 1st, 2025
-                if (date.getMonth() === 0 && date.getDate() === 1 && date.getFullYear() === 2025) {
-                    return {
-                        value: 89.272,
-                        date: date
-                    };
-                }
-                return {
-                    value: 100, // Set all other days to 100% for operational systems
-                    date: date
-                };
-            } else {
-                return {
-                    value: 0, // 0% for down systems
-                    date: date
-                };
-            }
+            date.setDate(date.getDate() - (89 - i)); // Count forward from 90 days ago
+            return {
+                date: date,
+                value: uptimeData[i] || 0 // Use actual uptime data or 0 if not available
+            };
         });
 
         charts[monitorId] = new Chart(ctx, {

@@ -25,7 +25,8 @@ def fetch_monitor_data(api_key):
         "response_times": "1",
         "response_times_limit": "1",
         "logs": "1",
-        "logs_limit": "1"
+        "logs_limit": "1",
+        "custom_uptime_ranges": "1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17-18-19-20-21-22-23-24-25-26-27-28-29-30-31-32-33-34-35-36-37-38-39-40-41-42-43-44-45-46-47-48-49-50-51-52-53-54-55-56-57-58-59-60-61-62-63-64-65-66-67-68-69-70-71-72-73-74-75-76-77-78-79-80-81-82-83-84-85-86-87-88-89-90"
     }
 
     try:
@@ -43,7 +44,7 @@ def fetch_monitor_data(api_key):
         processed_monitors = []
         for monitor in data['monitors']:
             try:
-                # Get custom uptime ratios
+                # Get custom uptime ratios for different time ranges
                 custom_ratios = monitor.get('custom_uptime_ratio', '').split('-')
                 uptime_ranges = {
                     '1': float(custom_ratios[0]) if len(custom_ratios) > 0 else 0.000,
@@ -52,12 +53,20 @@ def fetch_monitor_data(api_key):
                     '90': float(custom_ratios[3]) if len(custom_ratios) > 3 else 0.000
                 }
 
+                # Get daily uptime data for the last 90 days
+                daily_uptimes = monitor.get('custom_uptime_ranges', '').split('-')
+                daily_uptimes = [float(x) if x else 0.000 for x in daily_uptimes]
+                # Pad with zeros if we don't have full 90 days
+                daily_uptimes = daily_uptimes + [0.000] * (90 - len(daily_uptimes))
+
                 processed_monitor = {
                     'id': monitor.get('id'),
                     'status': get_status_text(monitor.get('status')),
                     'uptime': float(monitor.get('custom_uptime_ratio', '0').split('-')[0]),
                     'last_check': format_timestamp(monitor.get('last_check', 0)),
-                    'custom_uptime_ranges': uptime_ranges
+                    'custom_uptime_ranges': uptime_ranges,
+                    'daily_uptimes': daily_uptimes,
+                    'friendly_name': monitor.get('friendly_name', '')
                 }
                 processed_monitors.append(processed_monitor)
             except Exception as e:
