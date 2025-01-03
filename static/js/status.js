@@ -64,15 +64,8 @@ function initializeUptimeCharts() {
                 labels: data.map(d => d.date),
                 datasets: [{
                     data: data.map(d => d.value),
-                    backgroundColor: function(context) {
-                        const value = context.raw;
-                        const date = new Date(data[context.dataIndex].date);
-                        if (date < nov28) {
-                            return '#e9ecef'; // Gray for dates before November 28th
-                        }
-                        return value < 95 ? '#dc3545' : '#3bd671'; // Red if below 95%, green otherwise
-                    },
-                    borderRadius: 4,
+                    backgroundColor: '#3bd671', // All bars are green
+                    borderRadius: 10,
                     borderWidth: 0,
                     barPercentage: 0.8,
                     categoryPercentage: 0.9
@@ -87,6 +80,8 @@ function initializeUptimeCharts() {
                     },
                     tooltip: {
                         enabled: true,
+                        mode: 'index',
+                        intersect: false,
                         position: 'nearest',
                         yAlign: 'bottom',
                         xAlign: 'center',
