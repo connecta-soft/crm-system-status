@@ -37,7 +37,7 @@
                                     <div class="d-flex align-items-center">
                                         <h3 class="h5 mb-0">System {{ (loop.index | string).zfill(2) }}</h3>
                                         <div class="status-divider mx-3"></div>
-                                        <span class="uptime-percentage">{{ "%.3f"|format(monitor.uptime) }}%</span>
+                                        <span class="uptime-percentage {% if monitor.uptime == 0.000 %}text-danger{% endif %}">{{ "%.3f"|format(monitor.uptime) }}%</span>
                                     </div>
                                     <div class="service-status">
                                         <span class="live-dot {{ 'bg-success' if monitor.status == 'Up' else 'bg-danger' }}"></span>
