@@ -61,10 +61,15 @@ document.addEventListener('DOMContentLoaded', function() {
             data: {
                 labels: data.map(d => d.date),
                 datasets: [{
-                    data: data.map(d => ({ x: d.date, y: d.value })),
+                    data: data.map(d => ({ x: d.date, y: 100 })), // Always show full height
                     backgroundColor: isUp ?
-                        data.map(d => d.value >= 95 ? '#3bd671' : '#dc3545') :
-                        '#e9ecef',
+                        data.map(d => {
+                            if (d.value >= 95) return '#3bd671'; // Green for high uptime
+                            // Calculate opacity based on uptime percentage
+                            const opacity = Math.max(0.3, d.value / 100); // Minimum opacity of 0.3
+                            return `rgba(220, 53, 69, ${opacity})`; // Red with variable opacity
+                        }) :
+                        '#e9ecef', // Light gray for down systems
                     borderWidth: 0,
                     barPercentage: 0.8,
                     categoryPercentage: 0.9,
@@ -179,10 +184,15 @@ function initializeUptimeCharts() {
             data: {
                 labels: data.map(d => d.date),
                 datasets: [{
-                    data: data.map(d => ({ x: d.date, y: d.value })), //Corrected this line
+                    data: data.map(d => ({ x: d.date, y: 100 })), // Always show full height
                     backgroundColor: isUp ?
-                        data.map(d => d.value >= 95 ? '#3bd671' : '#dc3545') :
-                        '#e9ecef',
+                        data.map(d => {
+                            if (d.value >= 95) return '#3bd671'; // Green for high uptime
+                            // Calculate opacity based on uptime percentage
+                            const opacity = Math.max(0.3, d.value / 100); // Minimum opacity of 0.3
+                            return `rgba(220, 53, 69, ${opacity})`; // Red with variable opacity
+                        }) :
+                        '#e9ecef', // Light gray for down systems
                     borderWidth: 0,
                     barPercentage: 0.8,
                     categoryPercentage: 0.9,
@@ -205,9 +215,8 @@ function initializeUptimeCharts() {
                         xAlign: 'center',
                         callbacks: {
                             label: function(context) {
-                                const value = isUp ? data[context.dataIndex].value : 0;
-                                const displayValue = value >= 95 ? 100 : value;
-                                return `Uptime: ${displayValue.toFixed(3)}%`;
+                                const value = data[context.dataIndex].value;
+                                return `Uptime: ${value.toFixed(3)}%`;
                             },
                             title: function(context) {
                                 const date = new Date(context[0].label);
