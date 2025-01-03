@@ -3,29 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Status Page</title>
+    <title>System Status</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@6.4.0/css/all.min.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar navbar-dark bg-dark">
+    <header class="header bg-dark text-white py-4">
         <div class="container">
-            <span class="navbar-brand mb-0 h1">Status Page</span>
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h3 mb-0">System Status</h1>
+                <div class="status-update text-end">
+                    <small>Last checked: <span id="last-update">{{ monitors[0].last_check if monitors else 'N/A' }}</span></small>
+                </div>
+            </div>
         </div>
-    </nav>
+    </header>
 
-    <div class="container mt-4">
-        {% block content %}{% endblock %}
-    </div>
+    <main class="main-content">
+        <div class="container py-4">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
 
-    <footer class="footer mt-5">
+    <footer class="footer mt-5 py-3 bg-light">
         <div class="container text-center">
-            <p class="text-muted">Status page powered by UptimeRobot API</p>
+            <p class="text-muted mb-0">Status page powered by UptimeRobot API</p>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{{ url_for('static', filename='js/status.js') }}"></script>
 </body>
 </html>

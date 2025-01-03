@@ -1,3 +1,4 @@
+/* Base styles */
 body {
     background-color: #f8f9fa;
     min-height: 100vh;
@@ -5,14 +6,35 @@ body {
     flex-direction: column;
 }
 
-.footer {
-    margin-top: auto;
-    padding: 20px 0;
-    background-color: #f8f9fa;
+.main-content {
+    flex: 1;
+}
+
+/* Header styles */
+.header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Overall status styles */
+.overall-status .card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.status-icon {
+    font-size: 1.5rem;
+}
+
+/* Service card styles */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
 }
 
 .monitor-card .card {
-    border-radius: 8px;
+    height: 100%;
+    border: none;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s;
 }
@@ -21,28 +43,56 @@ body {
     transform: translateY(-2px);
 }
 
-.uptime-label, .last-check-label {
-    display: block;
-    font-size: 0.8rem;
-    color: #6c757d;
+.service-header {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
 }
 
-.uptime-value, .last-check-value {
+.status-badge {
+    padding: 0.5rem 1rem;
     font-weight: 500;
 }
 
-.badge {
-    padding: 8px 12px;
-    font-size: 0.9rem;
+.uptime-percentage {
+    text-align: right;
 }
 
+.uptime-percentage small {
+    display: block;
+    font-size: 0.75rem;
+}
+
+.uptime-graph {
+    margin: 1rem 0;
+    height: 60px;
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
-    .monitor-card .card-body .row > div {
-        margin-bottom: 10px;
-        text-align: center;
+    .services-grid {
+        grid-template-columns: 1fr;
     }
-    
-    .monitor-card .card-body .row > div:last-child {
-        margin-bottom: 0;
+
+    .header h1 {
+        font-size: 1.5rem;
     }
+
+    .status-update {
+        font-size: 0.8rem;
+    }
+}
+
+/* Status colors */
+.bg-success { background-color: #28a745 !important; }
+.bg-danger { background-color: #dc3545 !important; }
+.bg-warning { background-color: #ffc107 !important; }
+.bg-info { background-color: #17a2b8 !important; }
+.bg-secondary { background-color: #6c757d !important; }
+
+/* Footer styles */
+.footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    padding: 1rem 0;
+    margin-top: auto;
 }

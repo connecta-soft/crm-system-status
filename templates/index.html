@@ -6,46 +6,61 @@
             {{ error }}
         </div>
     {% else %}
-        <div class="row mb-4">
-            <div class="col">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">System Status</h5>
-                        <p class="card-text">
-                            Last updated: <span id="last-update">{{ monitors[0].last_check if monitors else 'N/A' }}</span>
-                        </p>
+        <div class="overall-status mb-4">
+            <div class="card">
+                <div class="card-body">
+                    {% set all_operational = monitors|selectattr('status', 'equalto', 'Up')|list|length == monitors|length %}
+                    <div class="d-flex align-items-center">
+                        <div class="status-icon {{ 'text-success' if all_operational else 'text-warning' }} me-3">
+                            <i class="fas fa-check-circle fa-2x"></i>
+                        </div>
+                        <div>
+                            <h2 class="h4 mb-1">
+                                {% if all_operational %}
+                                    All Systems Operational
+                                {% else %}
+                                    Partial System Outage
+                                {% endif %}
+                            </h2>
+                            <p class="text-muted mb-0">
+                                {{ monitors|length }} services monitored
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="monitors-container">
+        <div class="services-grid">
             {% for monitor in monitors %}
-                <div class="monitor-card mb-3" data-monitor-id="{{ monitor.id }}">
+                <div class="monitor-card mb-4" data-monitor-id="{{ monitor.id }}">
                     <div class="card">
                         <div class="card-body">
-                            <div class="row align-items-center">
-                                <div class="col-md-4">
-                                    <h5 class="card-title">{{ monitor.name }}</h5>
-                                    <p class="card-text text-muted">{{ monitor.url }}</p>
-                                </div>
-                                <div class="col-md-2">
-                                    <span class="badge bg-{{ monitor.status_class }}">
+                            <div class="service-header mb-3">
+                                <h3 class="h5 mb-2">{{ monitor.name }}</h3>
+                                <p class="text-muted small mb-0">{{ monitor.url }}</p>
+                            </div>
+
+                            <div class="service-status mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="status-badge badge bg-{{ monitor.status_class }}">
                                         {{ monitor.status }}
                                     </span>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="uptime">
-                                        <span class="uptime-label">Uptime</span>
-                                        <span class="uptime-value">{{ "%.2f"|format(monitor.uptime) }}%</span>
+                                    <div class="uptime-percentage">
+                                        <span class="h4 mb-0">{{ "%.2f"|format(monitor.uptime) }}%</span>
+                                        <small class="text-muted">Uptime</small>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="last-check">
-                                        <span class="last-check-label">Last Check</span>
-                                        <span class="last-check-value">{{ monitor.last_check }}</span>
-                                    </div>
-                                </div>
+                            </div>
+
+                            <div class="uptime-graph">
+                                <canvas class="uptime-chart" data-monitor-id="{{ monitor.id }}"></canvas>
+                            </div>
+
+                            <div class="service-details mt-3">
+                                <small class="text-muted">
+                                    Last checked: <span class="last-check-value">{{ monitor.last_check }}</span>
+                                </small>
                             </div>
                         </div>
                     </div>
