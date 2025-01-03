@@ -37,7 +37,7 @@ body {
     border: 1px solid #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     border-radius: 10px;
-    margin-bottom: 2rem;
+    margin-bottom: 20px;
 }
 
 .monitor-detail .vr {
@@ -177,8 +177,13 @@ canvas.uptime-chart {
 
 
 .monitor-detail .row.g-4 {
-    row-gap: 2rem !important;
+    row-gap: 20px !important;
 }
+
+.services-list .monitor-card {
+    margin-bottom: 20px;
+}
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

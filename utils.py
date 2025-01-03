@@ -113,10 +113,10 @@ def fetch_monitor_detail(api_key, monitor_id):
         for log in monitor.get('logs', []):
             event = {
                 'type': 'up' if log.get('type') == 2 else 'down',
-                'title': 'Running again' if log.get('type') == 2 else 'Down',
+                'title': get_event_description(str(log.get('type')), log.get('reason')),
                 'timestamp': format_timestamp(log.get('datetime')),
                 'duration': log.get('duration'),
-                'details': log.get('reason') if log.get('reason') else None
+                'details': get_event_description(str(log.get('type')), log.get('reason'))
             }
             events.append(event)
 
@@ -196,3 +196,12 @@ def format_timestamp(timestamp):
         return datetime.fromtimestamp(int(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
     except (ValueError, TypeError):
         return "N/A"
+
+def get_event_description(code, reason=None):
+    """Convert error codes to human-readable descriptions"""
+    if code == '98':
+        return 'Monitor has started'
+    elif code == '333333':
+        return 'The response took so long that the connection timed out'
+    # Add more error codes as needed
+    return reason if reason else 'Unknown error'
