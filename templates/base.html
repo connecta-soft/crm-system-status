@@ -9,12 +9,12 @@
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 </head>
 <body>
-    <header class="header bg-dark text-white py-4">
+    <header class="header bg-dark text-white py-3">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center">
-                <h1 class="h3 mb-0">System Status</h1>
+                <h1 class="h4 mb-0">System Status</h1>
                 <div class="status-update text-end">
-                    <small>Last updated <span id="last-update">{{ monitors[0].last_check if monitors else 'N/A' }}</span> | Next update in <span id="countdown">60</span> sec</small>
+                    <small>Last updated <span id="last-update">{{ monitors[0].last_check if monitors else 'N/A' }}</span></small>
                 </div>
             </div>
         </div>

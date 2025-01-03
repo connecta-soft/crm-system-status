@@ -2,14 +2,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize uptime charts for each monitor
     initializeUptimeCharts();
 
-    // Start countdown timer
-    startCountdown();
-
     // Update monitor data every 60 seconds
     setInterval(updateMonitors, 60000);
 });
 
-function startCountdown() {
+function initializeCharts() {
     let timeLeft = 60;
     const countdownElement = document.getElementById('countdown');
     
