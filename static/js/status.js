@@ -6,11 +6,11 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(updateMonitors, 60000);
 });
 
-function initializeCharts() {
+function startCountdown() {
     let timeLeft = 60;
     const countdownElement = document.getElementById('countdown');
     
-    if (!countdownElement) return; // Don't start countdown if element doesn't exist
+    if (!countdownElement) return;
     
     function updateCountdown() {
         if (timeLeft > 0) {
@@ -23,6 +23,10 @@ function initializeCharts() {
 
     setInterval(updateCountdown, 1000);
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    startCountdown();
+});
 
 function initializeUptimeCharts() {
     const charts = {};
