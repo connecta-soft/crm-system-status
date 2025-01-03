@@ -1,166 +1,24 @@
 body {
-    background-color: #1a1d21;
-    color: #fff;
+    background-color: #f8f9fa;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-}
-
-.navbar {
-    background-color: #1a1d21 !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 1rem 0;
-}
-
-.navbar-brand {
-    font-weight: 600;
-    font-size: 1.25rem;
-}
-
-.container {
-    max-width: 1000px;
-    padding: 0 1.5rem;
-}
-
-.status-overview {
-    padding: 2rem 0;
-}
-
-.status-overview h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 0;
-}
-
-.text-muted {
-    color: rgba(255, 255, 255, 0.6) !important;
-    font-size: 0.875rem;
-}
-
-.status-indicator {
-    display: inline-flex;
-    align-items: center;
-    padding: 1rem 1.5rem;
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    margin-top: 1.5rem;
-}
-
-.status-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    margin-right: 12px;
-}
-
-.status-indicator.up .status-dot {
-    background-color: #4caf50;
-}
-
-.status-indicator.down .status-dot {
-    background-color: #f44336;
-}
-
-.status-text {
-    font-weight: 500;
-}
-
-.services-section {
-    margin-top: 3rem;
-}
-
-.services-section h3 {
-    font-size: 1.125rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    color: rgba(255, 255, 255, 0.9);
-}
-
-.monitor-row {
-    background-color: rgba(255, 255, 255, 0.05);
-    padding: 1.25rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    transition: background-color 0.2s ease;
-}
-
-.monitor-row:hover {
-    background-color: rgba(255, 255, 255, 0.08);
-}
-
-.monitor-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.monitor-name {
-    font-size: 0.9375rem;
-    font-weight: 500;
-    margin-left: 12px;
-}
-
-.uptime-percentage {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.875rem;
-    font-weight: 500;
-}
-
-.timeline-container {
-    overflow-x: hidden;
-}
-
-.timeline {
-    display: flex;
-    gap: 2px;
-    min-width: 100%;
-    height: 8px;
-}
-
-.timeline-segment {
-    flex: 1;
-    height: 100%;
-    min-width: 3px;
-    border-radius: 1px;
-    transition: background-color 0.2s ease;
-}
-
-.timeline-segment.up {
-    background-color: #4caf50;
-}
-
-.timeline-segment.down {
-    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .footer {
     margin-top: auto;
-    padding: 1.5rem 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px 0;
+    background-color: #f8f9fa;
 }
 
-@media (max-width: 768px) {
-    .container {
-        padding: 0 1rem;
-    }
+.monitor-card .card {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+}
 
-    .status-overview .d-flex {
-        flex-direction: column;
-        align-items: flex-start !important;
-        gap: 0.5rem;
-    }
-
-    .monitor-info {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-
-    .uptime-percentage {
-        margin-left: 22px;
-    }
+.monitor-card .card:hover {
+    transform: translateY(-2px);
 }
 
 .uptime-label, .last-check-label {
@@ -178,12 +36,13 @@ body {
     font-size: 0.9rem;
 }
 
-.monitor-card .card {
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s;
-}
-
-.monitor-card .card:hover {
-    transform: translateY(-2px);
+@media (max-width: 768px) {
+    .monitor-card .card-body .row > div {
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    
+    .monitor-card .card-body .row > div:last-child {
+        margin-bottom: 0;
+    }
 }
