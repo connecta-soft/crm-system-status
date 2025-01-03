@@ -28,8 +28,8 @@ body {
 
 /* Live dot animation */
 .live-dot {
-    width: 8px;
-    height: 8px;
+    width: 40px;
+    height: 40px;
     background-color: #3bd671;
     border-radius: 50%;
     display: inline-block;
@@ -59,10 +59,8 @@ body {
 }
 
 /* Service card styles */
-.services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
+.services-list {
+    width: 100%;
 }
 
 .monitor-card .card {
@@ -81,7 +79,7 @@ body {
 }
 
 .status-divider {
-    width: 2px;
+    width: 1px;
     height: 21px;
     background-color: #e9ecef;
 }
@@ -92,14 +90,14 @@ body {
     font-weight: 500;
 }
 
-.uptime-percentage small {
-    display: block;
-    font-size: 0.75rem;
-}
-
 .service-status {
     display: flex;
     align-items: center;
+}
+
+.service-status .live-dot {
+    width: 8px;
+    height: 8px;
 }
 
 .status-text {
@@ -112,16 +110,20 @@ body {
     height: 30px;
 }
 
+/* Bar chart styles */
+canvas.uptime-chart {
+    border-radius: 4px;
+    padding: 0 2px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .services-grid {
         grid-template-columns: 1fr;
     }
-
     .header h1 {
         font-size: 1.5rem;
     }
-
     .status-update {
         font-size: 0.8rem;
     }
@@ -129,16 +131,14 @@ body {
 
 /* Status colors */
 .text-success { color: #3bd671 !important; }
-.bg-success { background-color: #28a745 !important; }
+.bg-success { background-color: #3bd671 !important; }
 .bg-danger { background-color: #dc3545 !important; }
 .bg-warning { background-color: #ffc107 !important; }
 .bg-info { background-color: #17a2b8 !important; }
-.bg-secondary { background-color: #6c757d !important; }
+.bg-secondary { background-color: #e9ecef !important; }
 
-/* Footer styles */
+
+/* Footer styles - Removed branding */
 .footer {
-    background-color: #f8f9fa;
-    border-top: 1px solid #dee2e6;
-    padding: 1rem 0;
-    margin-top: auto;
+    /* Removed content */
 }

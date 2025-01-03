@@ -14,6 +14,11 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", "default_secret_key")
 # Get API key from environment variable
 UPTIMEROBOT_API_KEY = os.environ.get("UPTIMEROBOT_API_KEY")
 
+# Custom template filter for padding numbers
+@app.template_filter('zfill')
+def zfill_filter(value, width=2):
+    return str(value).zfill(width)
+
 @app.route('/')
 def index():
     """Render the main status page."""

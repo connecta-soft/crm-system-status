@@ -31,13 +31,32 @@ function initializeUptimeCharts() {
         const ctx = canvas.getContext('2d');
         const monitorId = canvas.dataset.monitorId;
 
+        // Calculate dates for the last 3 months
+        const today = new Date();
+        const threeMonthsAgo = new Date();
+        threeMonthsAgo.setMonth(today.getMonth() - 3);
+
+        // Generate sample data with some downtime
+        const data = Array(180).fill(null).map((_, i) => {
+            if (i < 60) return { value: null }; // Pre-data period
+            return {
+                value: Math.random() > 0.95 ? 0 : 100, // 5% chance of downtime
+                date: new Date(threeMonthsAgo.getTime() + (i * 24 * 60 * 60 * 1000))
+            };
+        });
+
         charts[monitorId] = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: Array(180).fill(''),  // 3 months of daily data points
+                labels: data.map(d => d.date),
                 datasets: [{
-                    data: Array(180).fill(100),
-                    backgroundColor: '#3bd671',
+                    data: data.map(d => d.value),
+                    backgroundColor: function(context) {
+                        const value = context.raw;
+                        if (value === null) return '#e9ecef';
+                        return value === 0 ? '#dc3545' : '#3bd671';
+                    },
+                    borderRadius: 4,
                     borderWidth: 0,
                     barPercentage: 0.8,
                     categoryPercentage: 0.9
@@ -52,9 +71,15 @@ function initializeUptimeCharts() {
                     },
                     tooltip: {
                         enabled: true,
+                        position: 'nearest',
                         callbacks: {
                             label: function(context) {
-                                return `Uptime: ${context.raw}%`;
+                                if (context.raw === null) return 'No data available';
+                                return context.raw === 0 ? 'Downtime' : 'Operational';
+                            },
+                            title: function(context) {
+                                const date = new Date(context[0].label);
+                                return date.toLocaleDateString();
                             }
                         }
                     }
@@ -94,12 +119,16 @@ function updateMonitors() {
 }
 
 function updateMonitorCards(monitors) {
-    monitors.forEach(monitor => {
+    monitors.forEach((monitor, index) => {
         const card = document.querySelector(`[data-monitor-id="${monitor.id}"]`);
         if (card) {
             // Update uptime percentage
             const uptimeValue = card.querySelector('.uptime-percentage');
             uptimeValue.textContent = `${monitor.uptime.toFixed(3)}%`;
+
+            // Update service name
+            const serviceName = card.querySelector('.h5');
+            serviceName.textContent = `Service ${String(index + 1).padStart(2, '0')}`;
         }
     });
 }
