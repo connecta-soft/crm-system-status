@@ -12,7 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
 function startCountdown() {
     let timeLeft = 60;
     const countdownElement = document.getElementById('countdown');
-
+    
+    if (!countdownElement) return; // Don't start countdown if element doesn't exist
+    
     function updateCountdown() {
         if (timeLeft > 0) {
             timeLeft--;
