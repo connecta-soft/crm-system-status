@@ -1,6 +1,7 @@
 import os
 import logging
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, make_response
+from flask_cors import CORS
 from utils import fetch_monitor_data
 
 # Configure logging
@@ -9,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 # Create Flask app
 app = Flask(__name__)
+CORS(app)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "default_secret_key")
 
 # Get API key from environment variable

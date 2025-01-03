@@ -107,7 +107,7 @@ body {
 /* Uptime graph styles */
 .uptime-graph {
     margin: 1rem 0;
-    height: 30px;
+    height: 60px;
 }
 
 /* Bar chart styles */
