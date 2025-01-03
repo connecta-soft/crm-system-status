@@ -21,9 +21,12 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
+/* Update status icon and live dot styles */
 .status-icon {
     font-size: 1.5rem;
     position: relative;
+    display: flex;
+    align-items: center;
 }
 
 /* Live dot animation */
@@ -92,7 +95,7 @@ body {
 
 .service-status {
     display: flex;
-    align-items: center;
+    align-items: center; /* Added for vertical alignment */
 }
 
 .service-status .live-dot {

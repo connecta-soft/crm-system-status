@@ -65,6 +65,12 @@ function initializeUptimeCharts() {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        left: 2,
+                        right: 2
+                    }
+                },
                 plugins: {
                     legend: {
                         display: false
@@ -72,6 +78,8 @@ function initializeUptimeCharts() {
                     tooltip: {
                         enabled: true,
                         position: 'nearest',
+                        yAlign: 'bottom',
+                        xAlign: 'center',
                         callbacks: {
                             label: function(context) {
                                 if (context.raw === null) return 'No data available';
