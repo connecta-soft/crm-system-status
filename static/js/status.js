@@ -19,9 +19,12 @@ function initializeUptimeCharts() {
         const monitorId = canvas.dataset.monitorId;
 
         // Generate sample data for 2 months (60 days)
-        const data = Array(60).fill(null).map(() => 
-            Math.random() > 0.1 ? 100 : null
-        );
+        const data = Array(60).fill(null).map(() => {
+            const rand = Math.random();
+            if (rand > 0.9) return 0; // Down
+            if (rand > 0.1) return 100; // Up
+            return null; // No data
+        });
 
         charts[monitorId] = new Chart(ctx, {
             type: 'bar',
@@ -33,13 +36,14 @@ function initializeUptimeCharts() {
                 }),
                 datasets: [{
                     data: data,
-                    backgroundColor: '#3bd671',
                     borderWidth: 0,
                     barPercentage: 1,
                     categoryPercentage: 1,
-                    backgroundColor: data.map(value => 
-                        value === null ? '#e9ecef' : '#3bd671'
-                    )
+                    backgroundColor: data.map(value => {
+                        if (value === null) return '#e9ecef'; // No data
+                        if (value === 0) return '#dc3545';   // Down (red)
+                        return '#3bd671';                    // Up (green)
+                    })
                 }]
             },
             options: {
@@ -63,7 +67,9 @@ function initializeUptimeCharts() {
                             },
                             label: function(context) {
                                 const value = context.raw;
-                                return value === null ? 'No records' : `${value}% operational`;
+                                if (value === null) return 'No records';
+                                if (value === 0) return 'Down';
+                                return '100% operational';
                             }
                         },
                         displayColors: false,

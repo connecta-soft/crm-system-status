@@ -51,8 +51,13 @@ body {
     color: #333;
 }
 
+.service-arrow {
+    margin: 0 10px;
+    color: #6c757d;
+}
+
 .service-divider {
-    width: 4.71px;
+    width: 1px;
     height: 21px;
     background-color: #e9ecef;
     margin: 0 15px;
@@ -71,8 +76,8 @@ body {
 }
 
 .live-dot {
-    width: 8px;
-    height: 8px;
+    width: 1em;
+    height: 1em;
     background-color: #3bd671;
     border-radius: 50%;
     animation: pulse 2s infinite;
