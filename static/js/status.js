@@ -75,6 +75,42 @@ function initializeUptimeCharts() {
                         },
                         bodyFont: {
                             size: 12
+                        },
+                        position: 'nearest',
+                        external: function(context) {
+                            // Remove previous tooltip
+                            const previousTooltip = document.getElementById('custom-tooltip');
+                            if (previousTooltip) {
+                                previousTooltip.remove();
+                            }
+
+                            // Get tooltip element
+                            const tooltipEl = document.createElement('div');
+                            tooltipEl.id = 'custom-tooltip';
+                            tooltipEl.className = 'uptime-tooltip';
+
+                            // Set position
+                            const position = context.chart.canvas.getBoundingClientRect();
+                            tooltipEl.style.left = position.left + window.pageXOffset + context.tooltip.caretX + 'px';
+                            tooltipEl.style.top = position.top + window.pageYOffset - 40 + 'px';
+
+                            // Set content
+                            const titleLines = context.tooltip.title || [];
+                            const bodyLines = context.tooltip.body.map(b => b.lines);
+
+                            let innerHTML = '<div>';
+                            titleLines.forEach(title => {
+                                innerHTML += `<div class="tooltip-title">${title}</div>`;
+                            });
+                            bodyLines.forEach(body => {
+                                innerHTML += `<div class="tooltip-body">${body}</div>`;
+                            });
+                            innerHTML += '</div>';
+
+                            tooltipEl.innerHTML = innerHTML;
+
+                            // Add to document
+                            document.body.appendChild(tooltipEl);
                         }
                     }
                 },
@@ -88,7 +124,10 @@ function initializeUptimeCharts() {
                         max: 100
                     }
                 },
-                animation: false
+                animation: false,
+                barThickness: 6,
+                maxBarThickness: 6,
+                minBarLength: 30
             }
         });
     });

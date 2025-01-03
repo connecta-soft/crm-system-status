@@ -12,7 +12,7 @@
                     {% set all_operational = monitors|selectattr('status', 'equalto', 'Up')|list|length == monitors|length %}
                     <div class="d-flex align-items-center">
                         <div class="status-icon {{ 'text-success' if all_operational else 'text-warning' }} me-3">
-                            <i class="fas fa-check-circle fa-2x"></i>
+                            <div class="live-dot"></div>
                         </div>
                         <div>
                             <h2 class="h4 mb-1">
@@ -38,8 +38,9 @@
                         <div class="card-body">
                             <div class="service-header">
                                 <div class="d-flex align-items-center justify-content-between w-100">
-                                    <div class="service-info d-flex align-items-center gap-3">
+                                    <div class="service-info d-flex align-items-center">
                                         <h3 class="h5 mb-0">{{ monitor.name }}</h3>
+                                        <div class="service-divider"></div>
                                         <span class="service-uptime">{{ "%.3f"|format(monitor.uptime) }}%</span>
                                     </div>
                                     <div class="service-status">
