@@ -204,6 +204,8 @@ def process_events(logs):
             # Find the next 'up' event or use current time
             current_time = int(datetime.now().timestamp())
             next_up_time = None
+
+            # Look for next 'Running again' event
             for next_log in logs[i+1:]:
                 if next_log.get('type') == 2:  # Up event
                     next_up_time = next_log.get('datetime')
@@ -211,7 +213,10 @@ def process_events(logs):
 
             down_time = log.get('datetime')
             end_time = next_up_time if next_up_time else current_time
-            event['duration'] = end_time - down_time
+
+            # Calculate duration in seconds
+            duration_seconds = end_time - down_time if end_time > down_time else 0
+            event['duration'] = duration_seconds
 
         events.append(event)
     return events
