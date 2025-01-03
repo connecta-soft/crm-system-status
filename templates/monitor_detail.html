@@ -7,7 +7,7 @@
         </div>
     {% else %}
         <div class="monitor-detail">
-            <div class="card mb-4">
+            <div class="card mb-3">
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <a href="{{ url_for('index') }}" class="btn btn-link text-secondary border-0 me-3 no-outline">
@@ -15,37 +15,36 @@
                         </a>
                         <div class="d-flex align-items-center justify-content-center flex-grow-1">
                             <span class="live-dot {{ 'bg-success' if monitor.status == 'Up' else 'bg-danger' }}" style="width: 12px; height: 12px;"></span>
-                            <h1 class="h4 mb-0 ms-2">System is {{ 'operational' if monitor.status == 'Up' else 'down' }}</h1>
+                            <h1 class="h4 mb-0 ms-2">{{ 'Operational' if monitor.status == 'Up' else 'Down' }}</h1>
                         </div>
                         <div style="width: 50px;"></div>
                     </div>
                 </div>
             </div>
 
-            <div class="row g-4">
-                <!-- Uptime Cards -->
+            <div class="row g-3">
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
                             <h2 class="h5 mb-4">Overall Uptime</h2>
                             <div class="d-flex justify-content-between align-items-center">
-                                <div class="uptime-stat" style="flex: 1">
-                                    <h3 class="h6 text-muted mb-1">Last 24 hours</h3>
+                                <div class="uptime-stat text-center" style="flex: 1">
+                                    <h3 class="h6 text-muted mb-2">Last 24 hours</h3>
                                     <p class="h4 mb-0">{{ "%.3f"|format(monitor.custom_uptime_ranges['1']) }}%</p>
                                 </div>
                                 <div class="vr mx-4" style="height: 40px;"></div>
-                                <div class="uptime-stat" style="flex: 1">
-                                    <h3 class="h6 text-muted mb-1">Last 7 days</h3>
+                                <div class="uptime-stat text-center" style="flex: 1">
+                                    <h3 class="h6 text-muted mb-2">Last 7 days</h3>
                                     <p class="h4 mb-0">{{ "%.3f"|format(monitor.custom_uptime_ranges['7']) }}%</p>
                                 </div>
                                 <div class="vr mx-4" style="height: 40px;"></div>
-                                <div class="uptime-stat" style="flex: 1">
-                                    <h3 class="h6 text-muted mb-1">Last 30 days</h3>
+                                <div class="uptime-stat text-center" style="flex: 1">
+                                    <h3 class="h6 text-muted mb-2">Last 30 days</h3>
                                     <p class="h4 mb-0">{{ "%.3f"|format(monitor.custom_uptime_ranges['30']) }}%</p>
                                 </div>
                                 <div class="vr mx-4" style="height: 40px;"></div>
-                                <div class="uptime-stat" style="flex: 1">
-                                    <h3 class="h6 text-muted mb-1">Last 90 days</h3>
+                                <div class="uptime-stat text-center" style="flex: 1">
+                                    <h3 class="h6 text-muted mb-2">Last 90 days</h3>
                                     <p class="h4 mb-0">{{ "%.3f"|format(monitor.custom_uptime_ranges['90']) }}%</p>
                                 </div>
                             </div>
@@ -53,7 +52,6 @@
                     </div>
                 </div>
 
-                <!-- Response Time Card -->
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
@@ -65,18 +63,18 @@
                                 <canvas id="responseTimeChart" height="100"></canvas>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-4">
-                                <div class="response-stat" style="flex: 1">
-                                    <h3 class="h6 text-muted mb-1">Avg. response time</h3>
+                                <div class="response-stat text-center" style="flex: 1">
+                                    <h3 class="h6 text-muted mb-2">Avg. response time</h3>
                                     <p class="h4 mb-0">{{ "%.2f"|format(monitor.response_times.avg) }}ms</p>
                                 </div>
                                 <div class="vr mx-4" style="height: 40px;"></div>
-                                <div class="response-stat" style="flex: 1">
-                                    <h3 class="h6 text-muted mb-1">Max. response time</h3>
+                                <div class="response-stat text-center" style="flex: 1">
+                                    <h3 class="h6 text-muted mb-2">Max. response time</h3>
                                     <p class="h4 mb-0">{{ "%.2f"|format(monitor.response_times.max) }}ms</p>
                                 </div>
                                 <div class="vr mx-4" style="height: 40px;"></div>
-                                <div class="response-stat" style="flex: 1">
-                                    <h3 class="h6 text-muted mb-1">Min. response time</h3>
+                                <div class="response-stat text-center" style="flex: 1">
+                                    <h3 class="h6 text-muted mb-2">Min. response time</h3>
                                     <p class="h4 mb-0">{{ "%.2f"|format(monitor.response_times.min) }}ms</p>
                                 </div>
                             </div>
@@ -84,7 +82,6 @@
                     </div>
                 </div>
 
-                <!-- Recent Events Card -->
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
@@ -94,26 +91,12 @@
                                 <div class="event-item mb-4">
                                     <div class="d-flex align-items-start">
                                         <span class="event-icon {{ 'text-success' if event.type == 'up' else 'text-danger' }} me-3">
-                                            {% if event.title == 'Running again' %}
-                                                <i class="fas fa-check-circle"></i>
-                                            {% elif event.title == 'Down' %}
-                                                <i class="fas fa-exclamation-circle"></i>
-                                            {% else %}
-                                                <i class="fas fa-play-circle"></i>
-                                            {% endif %}
+                                            <i class="fas fa-{{ 'check' if event.type == 'up' else 'exclamation' }}-circle"></i>
                                         </span>
                                         <div>
-                                            <h3 class="h6 mb-1">
-                                                {% if event.title == 'Running again' %}
-                                                    Running again
-                                                {% elif event.title == 'Monitor started' %}
-                                                    Monitor started
-                                                {% else %}
-                                                    Down
-                                                {% endif %}
-                                            </h3>
+                                            <h3 class="h6 mb-1">{{ event.title }}</h3>
                                             <p class="text-muted small mb-0">{{ event.timestamp }}</p>
-                                            {% if event.details and event.type == 'down' %}
+                                            {% if event.details %}
                                                 <p class="mb-0 mt-2">{{ event.details }}</p>
                                             {% endif %}
                                         </div>
