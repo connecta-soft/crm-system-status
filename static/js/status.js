@@ -21,11 +21,11 @@ function initializeUptimeCharts() {
         // Initialize 90 days of data as null (gray bars)
         const data = Array(90).fill(null);
         
-        // Set active days to 100 (green) or 0 (red) based on uptime ranges
+        // Set actual uptime percentages
         const uptimeRanges = canvas.dataset.uptimeRanges?.split('-') || [];
         uptimeRanges.forEach((range, index) => {
             const value = parseFloat(range);
-            data[89 - index] = value === 0 ? 0 : 100; // Most recent data at the end
+            data[89 - index] = value; // Most recent data at the end
         });
 
         charts[monitorId] = new Chart(ctx, {
