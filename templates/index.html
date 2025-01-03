@@ -51,7 +51,7 @@
                             </div>
 
                             <div class="uptime-graph">
-                                <canvas class="uptime-chart" data-monitor-id="{{ monitor.id }}"></canvas>
+                                <canvas class="uptime-chart" data-monitor-id="{{ monitor.id }}" data-uptime-ranges="{{ monitor.uptime_ranges|join('-') }}"></canvas>
                             </div>
                         </div>
                     </div>
