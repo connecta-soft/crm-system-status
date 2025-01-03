@@ -9,13 +9,18 @@
         <div class="overall-status mb-4">
             <div class="card">
                 <div class="card-body">
-                    {% set all_operational = monitors|selectattr('status', 'equalto', 'Up')|list|length == monitors|length %}
+                    {% set operational_count = monitors|selectattr('status', 'equalto', 'Up')|list|length %}
+                    {% set total_count = monitors|length %}
+                    {% set all_down = operational_count == 0 %}
+                    {% set some_down = operational_count > 0 and operational_count < total_count %}
+                    {% set status_color = 'bg-danger' if all_down else ('bg-warning' if some_down else 'bg-success') %}
+                    {% set text_color = 'text-danger' if all_down else ('text-warning' if some_down else 'text-success') %}
                     <div class="d-flex align-items-center">
-                        <div class="status-icon {{ 'text-success' if all_operational else 'text-danger' }} me-3">
-                            <span class="live-dot {{ 'bg-success' if all_operational else 'bg-danger' }}"></span>
+                        <div class="status-icon {{ text_color }} me-3">
+                            <span class="live-dot {{ status_color }}"></span>
                         </div>
                         <div>
-                            <h2 class="h4 mb-0">Some Systems <span class="{{ 'text-success' if all_operational else 'text-danger' }}">{{ 'Operational' if all_operational else 'Down' }}</span></h2>
+                            <h2 class="h4 mb-0">Some Systems <span class="{{ text_color }}">{{ 'Down' if all_down else ('Operational' if not some_down else 'Down') }}</span></h2>
                         </div>
                     </div>
                 </div>
