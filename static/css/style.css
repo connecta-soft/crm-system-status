@@ -26,18 +26,15 @@ body {
     border: 1px solid #fff !important;
 }
 
-/* Overall status styles */
-.overall-status .card {
-    border: 1px solid #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    border-radius: 10px;
+.monitor-detail .row.g-4 {
+    row-gap: 1.5rem !important;
 }
 
 .monitor-detail .card {
     border: 1px solid #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     border-radius: 10px;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .monitor-detail .vr {
@@ -50,6 +47,13 @@ body {
     height: 21px;
     background-color: #fff;
     opacity: 0.2;
+}
+
+/* Overall status styles */
+.overall-status .card {
+    border: 1px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
 }
 
 /* Update status icon and live dot styles */
@@ -178,9 +182,6 @@ canvas.uptime-chart {
     font-size: 1.2rem;
 }
 
-.monitor-detail .row.g-4 {
-    row-gap: 2rem !important;
-}
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
