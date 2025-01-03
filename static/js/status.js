@@ -20,7 +20,7 @@ function initializeUptimeCharts() {
 
         // Initialize 90 days of data as null (gray bars)
         const data = Array(90).fill(null);
-        
+
         // Set actual uptime percentages
         const uptimeRanges = canvas.dataset.uptimeRanges?.split('-') || [];
         uptimeRanges.forEach((range, index) => {
@@ -28,14 +28,41 @@ function initializeUptimeCharts() {
             data[89 - index] = value; // Most recent data at the end
         });
 
+        // Generate dates for the last 3 months
+        const dates = Array(90).fill('').map((_, i) => {
+            const d = new Date();
+            d.setDate(d.getDate() - (89 - i));
+            return d;
+        });
+
+        // Find index for specific dates
+        const jan1Index = dates.findIndex(date => 
+            date.getMonth() === 0 && date.getDate() === 1);
+        const nov28Index = dates.findIndex(date => 
+            date.getMonth() === 10 && date.getDate() === 28);
+
+        // Set data values based on requirements
+        for (let i = 0; i < data.length; i++) {
+            const date = dates[i];
+            if (i === data.length - 1) {
+                // Keep today's value from API response
+                continue;
+            } else if (i === jan1Index) {
+                // Set January 1st to 89.272% uptime
+                data[i] = 89.272;
+            } else if (i >= nov28Index) {
+                // Set 100% uptime for all other days from Nov 28th onwards
+                data[i] = 100;
+            } else {
+                // Set null (gray) for days before Nov 28th
+                data[i] = null;
+            }
+        }
+
         charts[monitorId] = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: Array(90).fill('').map((_, i) => {
-                    const d = new Date();
-                    d.setDate(d.getDate() - (89 - i));
-                    return d;
-                }),
+                labels: dates,
                 datasets: [{
                     data: data,
                     borderWidth: 0,
@@ -44,7 +71,7 @@ function initializeUptimeCharts() {
                     categoryPercentage: 1,
                     backgroundColor: data.map(value => {
                         if (value === null) return '#e9ecef'; // No data
-                        if (value === 0) return '#dc3545';    // Down (red)
+                        if (value < 100) return '#dc3545';    // Down (red)
                         return '#3bd671';                     // Up (green)
                     })
                 }]
@@ -90,7 +117,8 @@ function initializeUptimeCharts() {
 
                             let status = 'No records';
                             if (value !== null) {
-                                status = value === 100 ? '100% operational' : 'Down';
+                                status = value === 100 ? '100% operational' : 
+                                    `${value.toFixed(3)}% operational`;
                             }
 
                             tooltipEl.innerHTML = `
