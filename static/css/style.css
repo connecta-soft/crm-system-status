@@ -1,0 +1,48 @@
+body {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer {
+    margin-top: auto;
+    padding: 20px 0;
+    background-color: #f8f9fa;
+}
+
+.monitor-card .card {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+}
+
+.monitor-card .card:hover {
+    transform: translateY(-2px);
+}
+
+.uptime-label, .last-check-label {
+    display: block;
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.uptime-value, .last-check-value {
+    font-weight: 500;
+}
+
+.badge {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .monitor-card .card-body .row > div {
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    
+    .monitor-card .card-body .row > div:last-child {
+        margin-bottom: 0;
+    }
+}

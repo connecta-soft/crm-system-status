@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if error %}
+        <div class="alert alert-danger" role="alert">
+            {{ error }}
+        </div>
+    {% else %}
+        <div class="row mb-4">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">System Status</h5>
+                        <p class="card-text">
+                            Last updated: <span id="last-update">{{ monitors[0].last_check if monitors else 'N/A' }}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="monitors-container">
+            {% for monitor in monitors %}
+                <div class="monitor-card mb-3" data-monitor-id="{{ monitor.id }}">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-4">
+                                    <h5 class="card-title">{{ monitor.name }}</h5>
+                                    <p class="card-text text-muted">{{ monitor.url }}</p>
+                                </div>
+                                <div class="col-md-2">
+                                    <span class="badge bg-{{ monitor.status_class }}">
+                                        {{ monitor.status }}
+                                    </span>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="uptime">
+                                        <span class="uptime-label">Uptime</span>
+                                        <span class="uptime-value">{{ "%.2f"|format(monitor.uptime) }}%</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="last-check">
+                                        <span class="last-check-label">Last Check</span>
+                                        <span class="last-check-value">{{ monitor.last_check }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}
