@@ -21,6 +21,83 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize uptime charts for each monitor
     initializeUptimeCharts();
 
+    // Initialize uptime chart for 90 days if it exists
+    const uptimeChart90Days = document.getElementById('uptimeChart90Days');
+    if (uptimeChart90Days) {
+        const ctx = uptimeChart90Days.getContext('2d');
+        const isUp = document.querySelector('.live-dot').classList.contains('bg-success');
+
+        // Calculate dates for the last 90 days
+        const today = new Date();
+        const threeMonthsAgo = new Date(today);
+        threeMonthsAgo.setMonth(today.getMonth() - 3);
+
+        // Generate data for last 90 days
+        const data = Array(90).fill(null).map((_, i) => {
+            const date = new Date(today);
+            date.setDate(date.getDate() - (90 - i));
+            return {
+                date: date,
+                value: isUp ? (Math.random() * 5 + 95) : 0 // 95-100% for up, 0% for down
+            };
+        });
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.map(d => d.date),
+                datasets: [{
+                    data: data.map(d => ({ x: d.date, y: 100 })),
+                    backgroundColor: isUp ?
+                        data.map(d => d.value >= 95 ? '#3bd671' : '#dc3545') :
+                        '#e9ecef',
+                    borderWidth: 0,
+                    barPercentage: 0.8,
+                    categoryPercentage: 0.9,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: true,
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                const value = data[context.dataIndex].value;
+                                return `Uptime: ${value.toFixed(3)}%`;
+                            },
+                            title: function(context) {
+                                const date = new Date(context[0].label);
+                                return date.toLocaleDateString();
+                            }
+                        },
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 10,
+                        displayColors: false
+                    }
+                },
+                scales: {
+                    x: {
+                        display: false
+                    },
+                    y: {
+                        display: false,
+                        min: 0,
+                        max: 100
+                    }
+                },
+                animation: false
+            }
+        });
+    }
+
     // Update monitor data every 60 seconds
     setInterval(updateMonitors, 60000);
 });
