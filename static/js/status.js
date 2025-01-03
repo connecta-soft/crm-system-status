@@ -101,7 +101,9 @@ function initializeUptimeCharts() {
                         },
                         backgroundColor: 'rgba(0, 0, 0, 0.8)',
                         padding: 10,
-                        displayColors: false
+                        displayColors: false,
+                        caretPadding: 15,
+                        caretSize: 0
                     }
                 },
                 scales: {
