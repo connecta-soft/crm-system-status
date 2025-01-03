@@ -108,17 +108,8 @@ def fetch_monitor_detail(api_key, monitor_id):
             'response_times': process_response_times(monitor.get('response_times', []))
         }
 
-        # Process events
-        events = []
-        for log in monitor.get('logs', []):
-            event = {
-                'type': 'up' if log.get('type') == 2 else 'down',
-                'title': 'Running again' if log.get('type') == 2 else 'Down',
-                'timestamp': format_timestamp(log.get('datetime')),
-                'duration': log.get('duration'),
-                'details': log.get('reason') if log.get('reason') else None
-            }
-            events.append(event)
+        # Process events using the new function
+        events = process_events(monitor.get('logs', []))
 
         return {
             'monitor': monitor_data,
@@ -191,8 +182,36 @@ def get_status_class(status_code):
     return status_class_map.get(status_code, "secondary")
 
 def format_timestamp(timestamp):
-    """Format Unix timestamp to readable date"""
+    """Format Unix timestamp to readable date without seconds"""
     try:
-        return datetime.fromtimestamp(int(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
+        return datetime.fromtimestamp(int(timestamp)).strftime('%Y-%m-%d %H:%M')
     except (ValueError, TypeError):
         return "N/A"
+
+def process_events(logs):
+    """Process events and calculate proper durations"""
+    events = []
+    for i, log in enumerate(logs):
+        event = {
+            'type': 'up' if log.get('type') == 2 else 'down',
+            'title': 'Running again' if log.get('type') == 2 else 'Down',
+            'timestamp': format_timestamp(log.get('datetime')),
+            'details': log.get('reason') if log.get('reason') else None
+        }
+
+        # Calculate duration for down events
+        if event['type'] == 'down':
+            # Find the next 'up' event or use current time
+            current_time = int(datetime.now().timestamp())
+            next_up_time = None
+            for next_log in logs[i+1:]:
+                if next_log.get('type') == 2:  # Up event
+                    next_up_time = next_log.get('datetime')
+                    break
+
+            down_time = log.get('datetime')
+            end_time = next_up_time if next_up_time else current_time
+            event['duration'] = end_time - down_time
+
+        events.append(event)
+    return events

@@ -126,7 +126,7 @@ body {
 }
 
 .service-header {
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #fff;
     padding-bottom: 1rem;
 }
 
@@ -170,11 +170,9 @@ canvas.uptime-chart {
 }
 
 /* Monitor detail specific styles */
-
 .monitor-detail .event-icon i {
     font-size: 1.2rem;
 }
-
 
 .monitor-detail .row.g-4 {
     row-gap: 2rem !important;
