@@ -91,7 +91,7 @@ function initializeUptimeCharts() {
 
                             let status = 'No records';
                             if (value !== null) {
-                                status = value === 100 ? '100% operational' : 'Down';
+                                status = value === 100 ? '100% operational' : `${value}% operational`;
                             }
 
                             tooltipEl.innerHTML = `
