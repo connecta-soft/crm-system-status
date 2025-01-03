@@ -14,7 +14,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <h1 class="h3 mb-0">System Status</h1>
                 <div class="status-update text-end">
-                    <small>Last checked: <span id="last-update">{{ monitors[0].last_check if monitors else 'N/A' }}</span></small>
+                    <small>Last updated <span id="last-update">{{ monitors[0].last_check if monitors else 'N/A' }}</span> | Next update in <span id="countdown">60</span> sec</small>
                 </div>
             </div>
         </div>
