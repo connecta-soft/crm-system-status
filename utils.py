@@ -168,6 +168,8 @@ def process_response_times(response_times):
 def process_events(logs):
     """Process events and calculate durations"""
     events = []
+    current_time = int(datetime.now().timestamp())
+
     for i, log in enumerate(logs):
         event = {
             'type': 'up' if log.get('type') == 2 else 'down',
@@ -176,11 +178,20 @@ def process_events(logs):
             'duration': None
         }
 
-        if event['type'] == 'down' and i < len(logs) - 1:
+        if event['type'] == 'down':
             down_time = log.get('datetime')
-            up_time = next((l.get('datetime') for l in logs[i+1:] if l.get('type') == 2), None)
+            # Look for the next 'up' event in the remaining logs
+            up_time = None
+            for next_log in logs[i+1:]:
+                if next_log.get('type') == 2:  # Type 2 is 'Up'
+                    up_time = next_log.get('datetime')
+                    break
 
-            if up_time and down_time:
+            # If no 'up' event found, use current time
+            if not up_time:
+                up_time = current_time
+
+            if down_time and up_time:
                 duration_minutes = (up_time - down_time) // 60
                 event['duration'] = calculate_duration_text(duration_minutes)
 
@@ -208,9 +219,19 @@ def calculate_duration_text(minutes):
     """Calculate human-readable duration text"""
     if minutes < 60:
         return f"{minutes} min"
+
     hours = minutes // 60
     remaining_minutes = minutes % 60
-    return f"{hours}h, {remaining_minutes}min"
+
+    if hours < 24:
+        return f"{hours}h, {remaining_minutes}min"
+
+    days = hours // 24
+    remaining_hours = hours % 24
+
+    if remaining_hours == 0:
+        return f"{days} days"
+    return f"{days} days, {remaining_hours}h"
 
 def get_status_text(status_code):
     """Convert status code to readable text"""
