@@ -100,28 +100,35 @@ def fetch_monitor_detail(api_key, monitor_id):
         response.raise_for_status()
         data = response.json()
 
-        if not data.get('monitors') or len(data['monitors']) == 0:
-            raise ValueError(f"Monitor {monitor_id} not found")
+        # Log the response for debugging
+        logger.debug(f"Monitor Detail API Response: {data}")
+
+        if data.get('stat') != 'ok' or not data.get('monitors'):
+            logger.error(f"Invalid API response: {data}")
+            raise ValueError(f"Invalid response from UptimeRobot API")
 
         monitor = data['monitors'][0]
 
         # Get custom uptime ratios
         custom_ratios = monitor.get('custom_uptime_ratio', '').split('-')
         uptime_ranges = {
-            '1': float(custom_ratios[0]) if len(custom_ratios) > 0 else 0.000,
-            '7': float(custom_ratios[1]) if len(custom_ratios) > 1 else 0.000,
-            '30': float(custom_ratios[2]) if len(custom_ratios) > 2 else 0.000,
-            '90': float(custom_ratios[3]) if len(custom_ratios) > 3 else 0.000
+            '1': float(custom_ratios[0]) if len(custom_ratios) > 0 and custom_ratios[0] else 0.000,
+            '7': float(custom_ratios[1]) if len(custom_ratios) > 1 and custom_ratios[1] else 0.000,
+            '30': float(custom_ratios[2]) if len(custom_ratios) > 2 and custom_ratios[2] else 0.000,
+            '90': float(custom_ratios[3]) if len(custom_ratios) > 3 and custom_ratios[3] else 0.000
         }
+
+        # Process response times
+        response_times_data = process_response_times(monitor.get('response_times', []))
 
         # Process monitor data
         monitor_data = {
             'id': monitor.get('id'),
             'status': get_status_text(monitor.get('status')),
-            'uptime': float(monitor.get('custom_uptime_ratio', '0').split('-')[0]),
+            'uptime': float(custom_ratios[0]) if custom_ratios and custom_ratios[0] else 0.000,
             'last_check': format_timestamp(monitor.get('last_check', 0)),
             'custom_uptime_ranges': uptime_ranges,
-            'response_times': process_response_times(monitor.get('response_times', []))
+            'response_times': response_times_data
         }
 
         # Process events
@@ -136,26 +143,74 @@ def fetch_monitor_detail(api_key, monitor_id):
         logger.error(f"API request failed: {str(e)}")
         raise
     except Exception as e:
-        logger.error(f"Unexpected error: {str(e)}")
+        logger.error(f"Unexpected error in fetch_monitor_detail: {str(e)}")
         raise
 
 def process_response_times(response_times):
     """Process response times array"""
     if not response_times:
         return {
-            'avg': 0,
-            'min': 0,
-            'max': 0,
+            'avg': 0.00,
+            'min': 0.00,
+            'max': 0.00,
             'data': []
         }
 
-    times = [rt.get('value', 0) for rt in response_times]
+    times = [float(rt.get('value', 0)) for rt in response_times if rt.get('value')]
+
     return {
-        'avg': sum(times) / len(times) if times else 0,
-        'min': min(times) if times else 0,
-        'max': max(times) if times else 0,
-        'data': [{'timestamp': rt.get('datetime'), 'value': rt.get('value')} for rt in response_times]
+        'avg': sum(times) / len(times) if times else 0.00,
+        'min': min(times) if times else 0.00,
+        'max': max(times) if times else 0.00,
+        'data': [{'timestamp': rt.get('datetime'), 'value': float(rt.get('value', 0))} for rt in response_times]
     }
+
+def process_events(logs):
+    """Process events and calculate durations"""
+    events = []
+    for i, log in enumerate(logs):
+        event = {
+            'type': 'up' if log.get('type') == 2 else 'down',
+            'title': get_event_title(log.get('type')),
+            'timestamp': format_timestamp(log.get('datetime')),
+            'duration': None
+        }
+
+        if event['type'] == 'down' and i < len(logs) - 1:
+            down_time = log.get('datetime')
+            up_time = next((l.get('datetime') for l in logs[i+1:] if l.get('type') == 2), None)
+
+            if up_time and down_time:
+                duration_minutes = (up_time - down_time) // 60
+                event['duration'] = calculate_duration_text(duration_minutes)
+
+        if log.get('reason'):
+            reason = log.get('reason')
+            if isinstance(reason, dict):
+                event['details'] = f"{reason.get('code', '')}: {reason.get('detail', '')}"
+            else:
+                event['details'] = str(reason)
+
+        events.append(event)
+    return events
+
+def get_event_title(event_type):
+    """Get event title based on type"""
+    event_titles = {
+        1: "Down",  # Monitor Started
+        2: "Running again",  # Up
+        99: "Down",  # Down
+        98: "Up",  # Started
+    }
+    return event_titles.get(event_type, "Unknown")
+
+def calculate_duration_text(minutes):
+    """Calculate human-readable duration text"""
+    if minutes < 60:
+        return f"{minutes} min"
+    hours = minutes // 60
+    remaining_minutes = minutes % 60
+    return f"{hours}h, {remaining_minutes}min"
 
 def get_status_text(status_code):
     """Convert status code to readable text"""
@@ -185,30 +240,3 @@ def format_timestamp(timestamp):
         return datetime.fromtimestamp(int(timestamp)).strftime('%Y-%m-%d %H:%M')
     except (ValueError, TypeError):
         return "N/A"
-
-def process_events(logs):
-    """Process events and calculate proper durations"""
-    events = []
-    for i, log in enumerate(logs):
-        event = {
-            'type': 'up' if log.get('type') == 2 else 'down',
-            'title': 'Running again' if log.get('type') == 2 else 'Down',
-            'timestamp': format_timestamp(log.get('datetime')),
-            'duration': None
-        }
-
-        # Calculate duration for down events
-        if event['type'] == 'down' and i < len(logs) - 1:
-            down_time = log.get('datetime')
-            up_time = next((l.get('datetime') for l in logs[i+1:] if l.get('type') == 2), None)
-
-            if up_time and down_time:
-                duration_minutes = (up_time - down_time) // 60  # Convert seconds to minutes
-                event['duration'] = f"{duration_minutes} min" if duration_minutes < 60 else f"{duration_minutes // 60}h {duration_minutes % 60}min"
-
-        # Add reason if available
-        if log.get('reason'):
-            event['details'] = log.get('reason')
-
-        events.append(event)
-    return events
