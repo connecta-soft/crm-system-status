@@ -15,7 +15,7 @@
                             <span class="live-dot"></span>
                         </div>
                         <div>
-                            <h2 class="h4 mb-0">Some Systems <span class="{{ 'text-success' if all_operational else 'text-danger' }}">{{ 'Operational' if all_operational else 'Down' }}</span></h2>
+                            <h2 class="h4 mb-0">All Systems <span class="{{ 'text-success' if all_operational else 'text-danger' }}">{{ 'Operational' if all_operational else 'Down' }}</span></h2>
                         </div>
                     </div>
                 </div>
@@ -24,7 +24,7 @@
 
         <div class="services-list">
             {% for monitor in monitors %}
-                <div class="monitor-card mb-4" data-monitor-id="{{ monitor.id }}" data-status="{{ monitor.status }}">
+                <div class="monitor-card mb-4" data-monitor-id="{{ monitor.id }}">
                     <div class="card">
                         <div class="card-body">
                             <div class="service-header mb-3">
@@ -35,8 +35,8 @@
                                         <span class="uptime-percentage">{{ "%.3f"|format(monitor.uptime) }}%</span>
                                     </div>
                                     <div class="service-status">
-                                        <span class="live-dot {{ 'live-dot-down' if monitor.status == 'Down' }}"></span>
-                                        <span class="status-text {{ 'text-danger' if monitor.status == 'Down' }}">{{ monitor.status }}</span>
+                                        <span class="live-dot"></span>
+                                        <span class="status-text">Operational</span>
                                     </div>
                                 </div>
                             </div>
