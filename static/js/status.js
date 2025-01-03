@@ -18,10 +18,10 @@ function initializeUptimeCharts() {
         const ctx = canvas.getContext('2d');
         const monitorId = canvas.dataset.monitorId;
 
-        // Generate sample data for 2 months (60 days)
-        const data = Array(60).fill(null).map(() => {
+        // Generate sample data for 3 months (90 days)
+        const data = Array(90).fill(null).map(() => {
             const rand = Math.random();
-            if (rand > 0.9) return 0; // Down
+            if (rand > 0.9) return Math.floor(Math.random() * 100); // Random downtime percentage
             if (rand > 0.1) return 100; // Up
             return null; // No data
         });
@@ -29,9 +29,9 @@ function initializeUptimeCharts() {
         charts[monitorId] = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: Array(60).fill('').map((_, i) => {
+                labels: Array(90).fill('').map((_, i) => {
                     const d = new Date();
-                    d.setDate(d.getDate() - (59 - i));
+                    d.setDate(d.getDate() - (89 - i));
                     return d;
                 }),
                 datasets: [{
@@ -41,8 +41,8 @@ function initializeUptimeCharts() {
                     categoryPercentage: 1,
                     backgroundColor: data.map(value => {
                         if (value === null) return '#e9ecef'; // No data
-                        if (value === 0) return '#dc3545';   // Down (red)
-                        return '#3bd671';                    // Up (green)
+                        if (value < 100) return '#dc3545';    // Partial/Full downtime (red)
+                        return '#3bd671';                     // Up (green)
                     })
                 }]
             },
@@ -54,69 +54,54 @@ function initializeUptimeCharts() {
                         display: false
                     },
                     tooltip: {
-                        enabled: true,
+                        enabled: false,
                         mode: 'index',
                         intersect: false,
-                        callbacks: {
-                            title: function(tooltipItems) {
-                                const date = new Date(tooltipItems[0].label);
-                                return date.toLocaleDateString('en-US', {
-                                    month: 'short',
-                                    day: 'numeric'
-                                });
-                            },
-                            label: function(context) {
-                                const value = context.raw;
-                                if (value === null) return 'No records';
-                                if (value === 0) return 'Down';
-                                return '100% operational';
-                            }
-                        },
-                        displayColors: false,
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        padding: 10,
-                        titleFont: {
-                            size: 13,
-                            weight: 'bold'
-                        },
-                        bodyFont: {
-                            size: 12
-                        },
-                        position: 'nearest',
                         external: function(context) {
-                            // Remove previous tooltip
-                            const previousTooltip = document.getElementById('custom-tooltip');
-                            if (previousTooltip) {
-                                previousTooltip.remove();
+                            const tooltip = document.getElementById('custom-tooltip');
+
+                            if (!context.tooltip.opacity) {
+                                if (tooltip) {
+                                    tooltip.classList.remove('visible');
+                                }
+                                return;
                             }
 
-                            // Get tooltip element
-                            const tooltipEl = document.createElement('div');
-                            tooltipEl.id = 'custom-tooltip';
-                            tooltipEl.className = 'uptime-tooltip';
-
-                            // Set position
                             const position = context.chart.canvas.getBoundingClientRect();
+                            const dataPoint = context.tooltip.dataPoints[0];
+                            const value = dataPoint.raw;
+                            const date = new Date(dataPoint.label);
+
+                            let tooltipEl = tooltip;
+                            if (!tooltipEl) {
+                                tooltipEl = document.createElement('div');
+                                tooltipEl.id = 'custom-tooltip';
+                                tooltipEl.className = 'uptime-tooltip';
+                                document.body.appendChild(tooltipEl);
+                            }
+
+                            const formattedDate = date.toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric'
+                            });
+
+                            let status = 'No records';
+                            if (value !== null) {
+                                status = value === 100 ? '100% operational' : 
+                                    `${value}% operational`;
+                            }
+
+                            tooltipEl.innerHTML = `
+                                <div class="tooltip-title">${formattedDate}</div>
+                                <div class="tooltip-body">${status}</div>
+                            `;
+
+                            tooltipEl.classList.add('visible');
+
+                            // Position tooltip above the bar
+                            const tooltipHeight = tooltipEl.offsetHeight;
                             tooltipEl.style.left = position.left + window.pageXOffset + context.tooltip.caretX + 'px';
-                            tooltipEl.style.top = position.top + window.pageYOffset - 40 + 'px';
-
-                            // Set content
-                            const titleLines = context.tooltip.title || [];
-                            const bodyLines = context.tooltip.body.map(b => b.lines);
-
-                            let innerHTML = '<div>';
-                            titleLines.forEach(title => {
-                                innerHTML += `<div class="tooltip-title">${title}</div>`;
-                            });
-                            bodyLines.forEach(body => {
-                                innerHTML += `<div class="tooltip-body">${body}</div>`;
-                            });
-                            innerHTML += '</div>';
-
-                            tooltipEl.innerHTML = innerHTML;
-
-                            // Add to document
-                            document.body.appendChild(tooltipEl);
+                            tooltipEl.style.top = position.top + window.pageYOffset - tooltipHeight - 10 + 'px';
                         }
                     }
                 },

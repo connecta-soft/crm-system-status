@@ -51,11 +51,6 @@ body {
     color: #333;
 }
 
-.service-arrow {
-    margin: 0 10px;
-    color: #6c757d;
-}
-
 .service-divider {
     width: 1px;
     height: 21px;
@@ -76,11 +71,16 @@ body {
 }
 
 .live-dot {
-    width: 1em;
-    height: 1em;
+    width: 60px;
+    height: 60px;
     background-color: #3bd671;
     border-radius: 50%;
     animation: pulse 2s infinite;
+}
+
+.service-status .live-dot {
+    width: 1em;
+    height: 1em;
 }
 
 @keyframes pulse {
@@ -113,6 +113,11 @@ body {
     font-size: 12px;
     pointer-events: none;
     z-index: 1000;
+    display: none;
+}
+
+.uptime-tooltip.visible {
+    display: block;
 }
 
 /* Responsive adjustments */
