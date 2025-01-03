@@ -36,10 +36,24 @@ document.addEventListener('DOMContentLoaded', function() {
         const data = Array(90).fill(null).map((_, i) => {
             const date = new Date(today);
             date.setDate(date.getDate() - (90 - i));
-            return {
-                date: date,
-                value: isUp ? (Math.random() * 5 + 95) : 0 // 95-100% for up, 0% for down
-            };
+            if (isUp) {
+                // Set specific value for January 1st, 2025
+                if (date.getMonth() === 0 && date.getDate() === 1 && date.getFullYear() === 2025) {
+                    return {
+                        value: 89.272,
+                        date: date
+                    };
+                }
+                return {
+                    value: 100, // Set all other days to 100% for operational systems
+                    date: date
+                };
+            } else {
+                return {
+                    value: 0, // 0% for down systems
+                    date: date
+                };
+            }
         });
 
         new Chart(ctx, {
@@ -47,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
             data: {
                 labels: data.map(d => d.date),
                 datasets: [{
-                    data: data.map(d => ({ x: d.date, y: 100 })),
+                    data: data.map(d => ({ x: d.date, y: d.value })),
                     backgroundColor: isUp ?
                         data.map(d => d.value >= 95 ? '#3bd671' : '#dc3545') :
                         '#e9ecef',
@@ -149,7 +163,7 @@ function initializeUptimeCharts() {
                     };
                 }
                 return {
-                    value: 95 + (Math.random() * 5), // Generate values between 95-100%
+                    value: 100, // Set all other days to 100% for operational systems
                     date: date
                 };
             } else {
@@ -165,10 +179,10 @@ function initializeUptimeCharts() {
             data: {
                 labels: data.map(d => d.date),
                 datasets: [{
-                    data: data.map(d => ({ x: d.date, y: 100 })), // Set all bars to full height
+                    data: data.map(d => ({ x: d.date, y: d.value })), //Corrected this line
                     backgroundColor: isUp ?
-                        data.map(d => d.value >= 95 ? '#3bd671' : '#dc3545') : // Green for >=95%, red for <95%
-                        '#e9ecef', // Light gray for down systems
+                        data.map(d => d.value >= 95 ? '#3bd671' : '#dc3545') :
+                        '#e9ecef',
                     borderWidth: 0,
                     barPercentage: 0.8,
                     categoryPercentage: 0.9,
