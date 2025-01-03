@@ -110,13 +110,15 @@
                                                     Monitor started
                                                 {% else %}
                                                     {% if event.duration %}
-                                                        Down for {{ (event.duration / 60) | int }}h, {{ event.duration % 60 }}min
+                                                        {% set hours = (event.duration / 3600)|int %}
+                                                        {% set minutes = ((event.duration % 3600) / 60)|int %}
+                                                        Down for {{ hours }}h, {{ minutes }}min
                                                     {% else %}
                                                         Down
                                                     {% endif %}
                                                 {% endif %}
                                             </h3>
-                                            <p class="text-muted small mb-0">{{ event.timestamp }}</p>
+                                            <p class="text-muted small mb-0">{{ event.timestamp.split(':')[0:2]|join(':') }}</p>
                                             {% if event.details and event.type == 'down' %}
                                                 <p class="mb-0 mt-2">{{ event.details }}</p>
                                             {% endif %}

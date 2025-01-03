@@ -1,6 +1,6 @@
 /* Base styles */
 body {
-    background-color: #f8f9fa;
+    background-color: #eaf2f8;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -17,19 +17,39 @@ body {
 
 /* Monitor detail styles */
 .no-outline {
-    border: none !important;
+    border: 1px solid #fff !important;
     box-shadow: none !important;
 }
 
 .no-outline:hover {
-    border: 1px solid #dee2e6 !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid #fff !important;
 }
 
 /* Overall status styles */
 .overall-status .card {
-    border: none;
+    border: 1px solid #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     border-radius: 10px;
+}
+
+.monitor-detail .card {
+    border: 1px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    margin-bottom: 2rem;
+}
+
+.monitor-detail .vr {
+    opacity: 0.2;
+    border-color: #fff;
+}
+
+.status-divider {
+    width: 1px;
+    height: 21px;
+    background-color: #fff;
+    opacity: 0.2;
 }
 
 /* Update status icon and live dot styles */
@@ -110,12 +130,6 @@ body {
     padding-bottom: 1rem;
 }
 
-.status-divider {
-    width: 1px;
-    height: 21px;
-    background-color: #e9ecef;
-}
-
 .uptime-percentage {
     text-align: right;
     color: #3bd671;
@@ -156,17 +170,11 @@ canvas.uptime-chart {
 }
 
 /* Monitor detail specific styles */
-.monitor-detail .card {
-    margin-bottom: 2rem;
-}
 
 .monitor-detail .event-icon i {
     font-size: 1.2rem;
 }
 
-.monitor-detail .vr {
-    opacity: 0.1;
-}
 
 .monitor-detail .row.g-4 {
     row-gap: 2rem !important;
