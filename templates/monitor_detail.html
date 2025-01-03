@@ -106,16 +106,10 @@
                                             <h3 class="h6 mb-1">
                                                 {% if event.title == 'Running again' %}
                                                     Running again
-                                                {% elif event.title.startswith('Monitor') %}
+                                                {% elif event.title == 'Monitor started' %}
                                                     Monitor started
                                                 {% else %}
-                                                    {% if event.duration %}
-                                                        {% set hours = (event.duration / 3600)|int %}
-                                                        {% set minutes = ((event.duration % 3600) / 60)|int %}
-                                                        Down for {{ hours }}h, {{ minutes }}min
-                                                    {% else %}
-                                                        Down
-                                                    {% endif %}
+                                                    Down{% if event.duration %} for {{ (event.duration / 3600)|int }}h, {{ ((event.duration % 3600) / 60)|int }}min{% endif %}
                                                 {% endif %}
                                             </h3>
                                             <p class="text-muted small mb-0">{{ event.timestamp.split(':')[0:2]|join(':') }}</p>
