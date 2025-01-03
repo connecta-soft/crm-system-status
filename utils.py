@@ -23,8 +23,7 @@ def fetch_monitor_data(api_key):
         "format": "json",
         "all_time_uptime_ratio": "1",
         "response_times": "1",
-        "response_times_limit": "1",
-        "custom_uptime_ranges": get_last_3months_ranges()
+        "response_times_limit": "1"
     }
 
     try:
@@ -40,20 +39,16 @@ def fetch_monitor_data(api_key):
             return []
 
         processed_monitors = []
-        for index, monitor in enumerate(data['monitors'], 1):
+        for monitor in data['monitors']:
             try:
-                # Split the custom uptime ranges into daily values
-                uptime_ranges = monitor.get('custom_uptime_ranges', '').split('-')
-
                 processed_monitor = {
                     'id': monitor.get('id'),
-                    'name': f"System {str(index).zfill(2)}",  # Format: System 01, System 02, etc.
+                    'name': monitor.get('friendly_name', 'Unnamed Monitor'),
                     'url': monitor.get('url', ''),
                     'status': get_status_text(monitor.get('status')),
                     'uptime': float(monitor.get('all_time_uptime_ratio', 0)),
                     'last_check': format_timestamp(monitor.get('last_check', 0)),
-                    'status_class': get_status_class(monitor.get('status')),
-                    'uptime_ranges': uptime_ranges
+                    'status_class': get_status_class(monitor.get('status'))
                 }
                 processed_monitors.append(processed_monitor)
             except Exception as e:
@@ -67,19 +62,6 @@ def fetch_monitor_data(api_key):
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         raise
-
-def get_last_3months_ranges():
-    """Generate custom uptime ranges for the last 3 months"""
-    from datetime import datetime, timedelta
-
-    end_date = datetime.now()
-    start_date = end_date - timedelta(days=90)
-
-    # Format dates as timestamps
-    start_timestamp = int(start_date.timestamp())
-    end_timestamp = int(end_date.timestamp())
-
-    return f"{start_timestamp}_{end_timestamp}"
 
 def get_status_text(status_code):
     """Convert status code to readable text"""

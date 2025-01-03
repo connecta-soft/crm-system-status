@@ -14,7 +14,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <h1 class="h3 mb-0">System Status</h1>
                 <div class="status-update text-end">
-                    <small>Last updated <span id="last-update">{{ monitors[0].last_check if monitors else 'N/A' }}</span> | Next update in <span id="next-update">60</span> sec</small>
+                    <small>Last checked: <span id="last-update">{{ monitors[0].last_check if monitors else 'N/A' }}</span></small>
                 </div>
             </div>
         </div>
@@ -28,7 +28,7 @@
 
     <footer class="footer mt-5 py-3 bg-light">
         <div class="container text-center">
-            <p class="text-muted mb-0">System Status Monitor</p>
+            <p class="text-muted mb-0">Status page powered by UptimeRobot API</p>
         </div>
     </footer>
 

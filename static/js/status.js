@@ -2,14 +2,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize uptime charts for each monitor
     initializeUptimeCharts();
 
-    // Start countdown timer
-    startUpdateCountdown();
-
     // Update monitor data every 60 seconds
-    setInterval(() => {
-        updateMonitors();
-        startUpdateCountdown();
-    }, 60000);
+    setInterval(updateMonitors, 60000);
 });
 
 function initializeUptimeCharts() {
@@ -18,38 +12,16 @@ function initializeUptimeCharts() {
         const ctx = canvas.getContext('2d');
         const monitorId = canvas.dataset.monitorId;
 
-        // Initialize 90 days of data as null (gray bars)
-        const data = Array(90).fill(null);
-
-        // Set actual uptime percentages
-        const uptimeRanges = canvas.dataset.uptimeRanges?.split('-') || [];
-        uptimeRanges.forEach((range, index) => {
-            const value = parseFloat(range);
-            data[89 - index] = value; // Most recent data at the end
-        });
-
-        // Generate dates for the last 3 months
-        const dates = Array(90).fill('').map((_, i) => {
-            const d = new Date();
-            d.setDate(d.getDate() - (89 - i));
-            return d;
-        });
-
         charts[monitorId] = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: dates,
+                labels: Array(24).fill(''),
                 datasets: [{
-                    data: data,
+                    data: Array(24).fill(100),
+                    backgroundColor: '#28a745',
                     borderWidth: 0,
-                    borderRadius: 4,
-                    barPercentage: 1,
-                    categoryPercentage: 1,
-                    backgroundColor: data.map(value => {
-                        if (value === null) return 'rgb(104, 119, 144)'; // Inactive days
-                        if (value < 100) return '#dc3545';    // Down (red)
-                        return '#3bd671';                     // Up (green)
-                    })
+                    barPercentage: 0.8,
+                    categoryPercentage: 0.9
                 }]
             },
             options: {
@@ -60,64 +32,12 @@ function initializeUptimeCharts() {
                         display: false
                     },
                     tooltip: {
-                        enabled: false,
-                        mode: 'index',
-                        intersect: false,
-                        external: function(context) {
-                            const tooltip = document.getElementById('custom-tooltip');
-
-                            if (!context.tooltip.opacity) {
-                                if (tooltip) {
-                                    tooltip.classList.remove('visible');
-                                }
-                                return;
-                            }
-
-                            const position = context.chart.canvas.getBoundingClientRect();
-                            const dataPoint = context.tooltip.dataPoints[0];
-                            const value = dataPoint.raw;
-                            const date = new Date(dataPoint.label);
-
-                            let tooltipEl = tooltip;
-                            if (!tooltipEl) {
-                                tooltipEl = document.createElement('div');
-                                tooltipEl.id = 'custom-tooltip';
-                                tooltipEl.className = 'uptime-tooltip';
-                                document.body.appendChild(tooltipEl);
-                            }
-
-                            const formattedDate = date.toLocaleDateString('en-US', {
-                                month: 'short',
-                                day: 'numeric'
-                            });
-
-                            let status = 'No records';
-                            if (value !== null) {
-                                status = value === 100 ? '100% operational' : 
-                                    `${value.toFixed(3)}% operational`;
-                            }
-
-                            tooltipEl.innerHTML = `
-                                <div class="tooltip-title">${formattedDate}</div>
-                                <div class="tooltip-body">${status}</div>
-                            `;
-
-                            tooltipEl.classList.add('visible');
-
-                            // Position tooltip above the bar
-                            const tooltipHeight = tooltipEl.offsetHeight;
-                            tooltipEl.style.left = position.left + window.pageXOffset + context.tooltip.caretX + 'px';
-                            tooltipEl.style.top = position.top + window.pageYOffset - tooltipHeight - 10 + 'px';
-                        }
+                        enabled: false
                     }
                 },
                 scales: {
                     x: {
-                        display: false,
-                        offset: false,
-                        grid: {
-                            display: false
-                        }
+                        display: false
                     },
                     y: {
                         display: false,
@@ -125,35 +45,11 @@ function initializeUptimeCharts() {
                         max: 100
                     }
                 },
-                animation: false,
-                barThickness: 6,
-                maxBarThickness: 6,
-                minBarLength: 40
+                animation: false
             }
         });
     });
     return charts;
-}
-
-function startUpdateCountdown() {
-    let countdown = 60;
-    const nextUpdateElement = document.getElementById('next-update');
-
-    // Clear any existing interval
-    if (window.countdownInterval) {
-        clearInterval(window.countdownInterval);
-    }
-
-    // Update countdown every second
-    window.countdownInterval = setInterval(() => {
-        countdown--;
-        if (nextUpdateElement) {
-            nextUpdateElement.textContent = countdown;
-        }
-        if (countdown <= 0) {
-            clearInterval(window.countdownInterval);
-        }
-    }, 1000);
 }
 
 function updateMonitors() {
@@ -177,11 +73,18 @@ function updateMonitorCards(monitors) {
     monitors.forEach(monitor => {
         const card = document.querySelector(`[data-monitor-id="${monitor.id}"]`);
         if (card) {
+            // Update status badge
+            const badge = card.querySelector('.status-badge');
+            badge.className = `status-badge badge bg-${monitor.status_class}`;
+            badge.textContent = monitor.status;
+
             // Update uptime percentage
-            const uptimeElement = card.querySelector('.service-uptime');
-            if (uptimeElement) {
-                uptimeElement.textContent = `${monitor.uptime.toFixed(3)}%`;
-            }
+            const uptimeValue = card.querySelector('.uptime-percentage .h4');
+            uptimeValue.textContent = `${monitor.uptime.toFixed(2)}%`;
+
+            // Update last check time
+            const lastCheckValue = card.querySelector('.last-check-value');
+            lastCheckValue.textContent = monitor.last_check;
         }
     });
 }
@@ -203,12 +106,6 @@ function updateSystemStatus(monitors) {
 function updateLastUpdateTime() {
     const lastUpdate = document.getElementById('last-update');
     if (lastUpdate) {
-        const now = new Date();
-        lastUpdate.textContent = now.toLocaleTimeString('en-US', {
-            hour: 'numeric',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: true
-        });
+        lastUpdate.textContent = new Date().toLocaleString();
     }
 }
