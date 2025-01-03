@@ -6,6 +6,24 @@ body {
     flex-direction: column;
 }
 
+/* Loading overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-overlay.active {
+    display: flex;
+}
+
 .main-content {
     flex: 1;
 }
@@ -181,7 +199,6 @@ canvas.uptime-chart {
 .monitor-detail .event-icon i {
     font-size: 1.2rem;
 }
-
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

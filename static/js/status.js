@@ -1,4 +1,20 @@
+// Show loading overlay before page transition
 document.addEventListener('DOMContentLoaded', function() {
+    // Add click event listeners to all links
+    document.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            // Only show loading for internal links
+            if (link.href && link.href.startsWith(window.location.origin)) {
+                document.getElementById('loading-overlay').classList.add('active');
+            }
+        });
+    });
+
+    // Hide loading overlay when page is fully loaded
+    window.addEventListener('load', function() {
+        document.getElementById('loading-overlay').classList.remove('active');
+    });
+
     // Start countdown immediately
     startCountdown();
 
