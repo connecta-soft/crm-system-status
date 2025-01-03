@@ -36,6 +36,9 @@ function initializeUptimeCharts() {
         const threeMonthsAgo = new Date(today);
         threeMonthsAgo.setMonth(today.getMonth() - 3);
 
+        // Get November 28th date
+        const nov28 = new Date(today.getFullYear(), 10, 28); // Month is 0-based, so 10 is November
+
         // Generate sample data
         const data = Array(90).fill(null).map((_, i) => {
             const date = new Date(today);
@@ -63,6 +66,10 @@ function initializeUptimeCharts() {
                     data: data.map(d => d.value),
                     backgroundColor: function(context) {
                         const value = context.raw;
+                        const date = new Date(data[context.dataIndex].date);
+                        if (date < nov28) {
+                            return '#e9ecef'; // Gray for dates before November 28th
+                        }
                         return value === 0 ? '#dc3545' : '#3bd671';
                     },
                     borderRadius: 4,
@@ -79,34 +86,7 @@ function initializeUptimeCharts() {
                         display: false
                     },
                     tooltip: {
-                        enabled: true,
-                        mode: 'index',
-                        intersect: false,
-                        position: 'nearest',
-                        yAlign: 'bottom',
-                        xAlign: 'center',
-                        callbacks: {
-                            label: function(context) {
-                                const value = context.raw;
-                                if (value === 0) return 'Downtime';
-                                if (value === 100) return 'Operational';
-                                return `Uptime: ${value.toFixed(3)}%`;
-                            },
-                            title: function(context) {
-                                const date = new Date(context[0].label);
-                                return date.toLocaleDateString();
-                            }
-                        },
-                        external: function(context) {
-                            // Ensure tooltip is always fully visible
-                            const tooltipEl = context.tooltip;
-                            const position = context.chart.canvas.getBoundingClientRect();
-
-                            // Adjust position to ensure tooltip is fully visible
-                            tooltipEl.style.position = 'absolute';
-                            tooltipEl.style.left = position.left + window.pageXOffset + tooltipEl.offsetWidth / 2 + 'px';
-                            tooltipEl.style.top = position.top + window.pageYOffset - tooltipEl.offsetHeight - 10 + 'px';
-                        }
+                        enabled: false
                     }
                 },
                 scales: {
