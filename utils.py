@@ -91,6 +91,8 @@ def fetch_monitor_detail(api_key, monitor_id):
         response.raise_for_status()
         data = response.json()
 
+        logger.debug(f"Monitor detail API Response: {data}")
+
         if not data.get('monitors') or len(data['monitors']) == 0:
             raise ValueError(f"Monitor {monitor_id} not found")
 
@@ -104,21 +106,25 @@ def fetch_monitor_detail(api_key, monitor_id):
             'status': get_status_text(monitor.get('status')),
             'uptime': float(monitor.get('all_time_uptime_ratio', 0)),
             'last_check': format_timestamp(monitor.get('last_check', 0)),
-            'custom_uptime_ranges': process_uptime_ranges(monitor.get('custom_uptime_ranges', '')),
+            'custom_uptime_ranges': process_uptime_ranges(monitor.get('custom_uptime_ratios', '')),
             'response_times': process_response_times(monitor.get('response_times', []))
         }
 
         # Process events
         events = []
         for log in monitor.get('logs', []):
-            event = {
-                'type': 'up' if log.get('type') == 2 else 'down',
-                'title': 'Running again' if log.get('type') == 2 else 'Down',
-                'timestamp': format_timestamp(log.get('datetime')),
-                'duration': log.get('duration'),
-                'details': log.get('reason') if log.get('reason') else None
-            }
-            events.append(event)
+            try:
+                event = {
+                    'type': 'up' if log.get('type') == 2 else 'down',
+                    'title': 'Running again' if log.get('type') == 2 else 'Down',
+                    'timestamp': format_timestamp(log.get('datetime')),
+                    'duration': log.get('duration'),
+                    'details': log.get('reason', {}).get('detail') if isinstance(log.get('reason'), dict) else log.get('reason')
+                }
+                events.append(event)
+            except Exception as e:
+                logger.error(f"Error processing event: {str(e)}")
+                continue
 
         return {
             'monitor': monitor_data,
