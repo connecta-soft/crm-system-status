@@ -33,7 +33,6 @@ body {
 .live-dot {
     width: 40px;
     height: 40px;
-    background-color: #3bd671;
     border-radius: 50%;
     display: inline-block;
     margin-right: 8px;
@@ -45,9 +44,25 @@ body {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: #3bd671;
     border-radius: 50%;
     animation: pulse 2s infinite;
+}
+
+/* Live dot colors */
+.live-dot.bg-success {
+    background-color: #3bd671;
+}
+
+.live-dot.bg-success::before {
+    background-color: #3bd671;
+}
+
+.live-dot.bg-danger {
+    background-color: #dc3545;
+}
+
+.live-dot.bg-danger::before {
+    background-color: #dc3545;
 }
 
 @keyframes pulse {
@@ -104,6 +119,10 @@ body {
     font-weight: 500;
 }
 
+.status-text.text-danger {
+    color: #dc3545 !important;
+}
+
 /* Uptime graph styles */
 .uptime-graph {
     margin: 1rem 0;
@@ -132,6 +151,7 @@ canvas.uptime-chart {
 
 /* Status colors */
 .text-success { color: #3bd671 !important; }
+.text-danger { color: #dc3545 !important; }
 .bg-success { background-color: #3bd671 !important; }
 .bg-danger { background-color: #dc3545 !important; }
 .bg-warning { background-color: #ffc107 !important; }
