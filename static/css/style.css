@@ -40,12 +40,16 @@ body {
     position: relative;
 }
 
+.live-dot.down {
+    background-color: #dc3545;
+}
+
 .live-dot::before {
     content: '';
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: #3bd671;
+    background-color: inherit;
     border-radius: 50%;
     animation: pulse 2s infinite;
 }

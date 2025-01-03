@@ -9,9 +9,9 @@ document.addEventListener('DOMContentLoaded', function() {
 function startCountdown() {
     let timeLeft = 60;
     const countdownElement = document.getElementById('countdown');
-    
+
     if (!countdownElement) return;
-    
+
     function updateCountdown() {
         if (timeLeft > 0) {
             timeLeft--;
@@ -33,27 +33,18 @@ function initializeUptimeCharts() {
     document.querySelectorAll('.uptime-chart').forEach(canvas => {
         const ctx = canvas.getContext('2d');
         const monitorId = canvas.dataset.monitorId;
+        const status = canvas.dataset.status;
+        const chartColor = status === 'Down' ? '#e9ecef' : '#3bd671';
 
         // Calculate dates for the last 3 months
         const today = new Date();
         const threeMonthsAgo = new Date(today);
         threeMonthsAgo.setMonth(today.getMonth() - 3);
 
-        // Get November 28th date
-        const nov28 = new Date(today.getFullYear(), 10, 28); // Month is 0-based, so 10 is November
-
         // Generate sample data for last 90 days
         const data = Array(90).fill(null).map((_, i) => {
             const date = new Date(today);
             date.setDate(date.getDate() - (90 - i));
-
-            // Set specific value for January 1st
-            if (date.getMonth() === 0 && date.getDate() === 1) {
-                return {
-                    value: 89.272,
-                    date: date
-                };
-            }
 
             return {
                 value: 95 + (Math.random() * 5), // Generate values between 95-100%
@@ -66,8 +57,8 @@ function initializeUptimeCharts() {
             data: {
                 labels: data.map(d => d.date),
                 datasets: [{
-                    data: data.map(d => d.value >= 95 ? 100 : d.value),
-                    backgroundColor: data.map(d => d.value >= 95 ? '#3bd671' : '#dc3545'),
+                    data: data.map(d => d.value),
+                    backgroundColor: chartColor,
                     borderRadius: 10,
                     borderWidth: 0,
                     barPercentage: 0.8,
