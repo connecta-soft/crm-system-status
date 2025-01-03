@@ -1,7 +1,7 @@
 import os
 import logging
 from datetime import datetime
-from flask import Flask, render_template, jsonify, make_response
+from flask import Flask, render_template, jsonify
 from flask_cors import CORS
 from utils import fetch_monitor_data, fetch_monitor_detail
 
@@ -27,6 +27,7 @@ def index():
     """Render the main status page."""
     try:
         initial_data = fetch_monitor_data(UPTIMEROBOT_API_KEY)
+        logger.debug(f"Successfully fetched initial data for {len(initial_data)} monitors")
         return render_template('index.html', monitors=initial_data, now=datetime.now())
     except Exception as e:
         logger.error(f"Error fetching initial monitor data: {str(e)}")
@@ -36,11 +37,24 @@ def index():
 def monitor_detail(monitor_id):
     """Render the detailed monitor view."""
     try:
+        if not monitor_id:
+            logger.error("No monitor ID provided")
+            return render_template('monitor_detail.html', error="No monitor ID provided", now=datetime.now())
+
+        logger.debug(f"Fetching details for monitor {monitor_id}")
         monitor_data = fetch_monitor_detail(UPTIMEROBOT_API_KEY, monitor_id)
+
+        if not monitor_data or not monitor_data.get('monitor'):
+            logger.error(f"No data returned for monitor {monitor_id}")
+            return render_template('monitor_detail.html', error="Monitor not found", now=datetime.now())
+
         return render_template('monitor_detail.html', 
                              monitor=monitor_data['monitor'],
-                             events=monitor_data['events'],
+                             events=monitor_data.get('events', []),
                              now=datetime.now())
+    except ValueError as ve:
+        logger.error(f"Value error in monitor detail: {str(ve)}")
+        return render_template('monitor_detail.html', error=str(ve), now=datetime.now())
     except Exception as e:
         logger.error(f"Error fetching monitor detail: {str(e)}")
         return render_template('monitor_detail.html', error="Unable to fetch monitor details", now=datetime.now())
