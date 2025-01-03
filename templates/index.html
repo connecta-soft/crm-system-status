@@ -30,7 +30,7 @@
                             <div class="service-header mb-3">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="d-flex align-items-center">
-                                        <h3 class="h5 mb-0">Service {{ (loop.index | string).zfill(2) }}</h3>
+                                        <h3 class="h5 mb-0">System {{ (loop.index | string).zfill(2) }}</h3>
                                         <div class="status-divider mx-3"></div>
                                         <span class="uptime-percentage">{{ "%.3f"|format(monitor.uptime) }}%</span>
                                     </div>
@@ -44,7 +44,7 @@
                             </div>
 
                             <div class="uptime-graph">
-                                <canvas class="uptime-chart" data-monitor-id="{{ monitor.id }}"></canvas>
+                                <canvas class="uptime-chart" data-monitor-id="{{ monitor.id }}" data-status="{{ 'up' if monitor.status == 'Up' else 'down' }}"></canvas>
                             </div>
                         </div>
                     </div>

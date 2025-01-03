@@ -33,6 +33,7 @@ function initializeUptimeCharts() {
     document.querySelectorAll('.uptime-chart').forEach(canvas => {
         const ctx = canvas.getContext('2d');
         const monitorId = canvas.dataset.monitorId;
+        const isUp = canvas.dataset.status === 'up';
 
         // Calculate dates for the last 90 days
         const today = new Date();
@@ -44,7 +45,7 @@ function initializeUptimeCharts() {
             const date = new Date(today);
             date.setDate(date.getDate() - (90 - i));
             return {
-                value: 95 + (Math.random() * 5), // Generate values between 95-100%
+                value: isUp ? (95 + (Math.random() * 5)) : 0, // 0% for down systems
                 date: date
             };
         });
@@ -54,8 +55,8 @@ function initializeUptimeCharts() {
             data: {
                 labels: data.map(d => d.date),
                 datasets: [{
-                    data: data.map(d => d.value),
-                    backgroundColor: '#3bd671', // All bars are green
+                    data: data.map(d => ({ x: d.date, y: 100 })), // Always 100% height
+                    backgroundColor: isUp ? '#3bd671' : '#4a4a4a', // Deep gray for down systems
                     borderRadius: 10,
                     borderWidth: 0,
                     barPercentage: 0.8,
@@ -78,7 +79,8 @@ function initializeUptimeCharts() {
                         xAlign: 'center',
                         callbacks: {
                             label: function(context) {
-                                return `Uptime: ${context.raw.toFixed(3)}%`;
+                                const value = isUp ? data[context.dataIndex].value : 0;
+                                return `Uptime: ${value.toFixed(3)}%`;
                             },
                             title: function(context) {
                                 const date = new Date(context[0].label);
@@ -134,9 +136,9 @@ function updateMonitorCards(monitors) {
             const uptimeValue = card.querySelector('.uptime-percentage');
             uptimeValue.textContent = `${monitor.uptime.toFixed(3)}%`;
 
-            // Update service name
-            const serviceName = card.querySelector('.h5');
-            serviceName.textContent = `Service ${String(index + 1).padStart(2, '0')}`;
+            // Update system name
+            const systemName = card.querySelector('.h5');
+            systemName.textContent = `System ${String(index + 1).padStart(2, '0')}`;
         }
     });
 }
