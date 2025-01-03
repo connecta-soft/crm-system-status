@@ -6,109 +6,124 @@
             {{ error }}
         </div>
     {% else %}
-        <div class="container py-4">
-            <div class="monitor-detail">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center justify-content-between mb-3">
-                            <div class="d-flex align-items-center">
-                                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary me-3">
-                                    <i class="fas fa-arrow-left"></i> Back
-                                </a>
-                                <div class="d-flex align-items-center">
-                                    <span class="live-dot {{ 'bg-success' if monitor.status == 'Up' else 'bg-danger' }}" style="width: 12px; height: 12px;"></span>
-                                    <h1 class="h4 mb-0 ms-2">{{ monitor.name }} is {{ 'operational' if monitor.status == 'Up' else 'down' }}</h1>
+        <div class="monitor-detail">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <a href="{{ url_for('index') }}" class="btn btn-link text-secondary border-0 me-3 no-outline">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </a>
+                        <div class="d-flex align-items-center justify-content-center flex-grow-1">
+                            <span class="live-dot {{ 'bg-success' if monitor.status == 'Up' else 'bg-danger' }}" style="width: 12px; height: 12px;"></span>
+                            <h1 class="h4 mb-0 ms-2">{{ monitor.name }} is {{ 'operational' if monitor.status == 'Up' else 'down' }}</h1>
+                        </div>
+                        <div style="width: 50px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Uptime Cards -->
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="h5 mb-4">Overall Uptime</h2>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="uptime-stat" style="flex: 1">
+                                    <h3 class="h6 text-muted mb-1">Last 24 hours</h3>
+                                    <p class="h4 mb-0">{{ monitor.custom_uptime_ranges['1'] }}%</p>
+                                </div>
+                                <div class="vr mx-4" style="height: 40px;"></div>
+                                <div class="uptime-stat" style="flex: 1">
+                                    <h3 class="h6 text-muted mb-1">Last 7 days</h3>
+                                    <p class="h4 mb-0">{{ monitor.custom_uptime_ranges['7'] }}%</p>
+                                </div>
+                                <div class="vr mx-4" style="height: 40px;"></div>
+                                <div class="uptime-stat" style="flex: 1">
+                                    <h3 class="h6 text-muted mb-1">Last 30 days</h3>
+                                    <p class="h4 mb-0">{{ monitor.custom_uptime_ranges['30'] }}%</p>
+                                </div>
+                                <div class="vr mx-4" style="height: 40px;"></div>
+                                <div class="uptime-stat" style="flex: 1">
+                                    <h3 class="h6 text-muted mb-1">Last 90 days</h3>
+                                    <p class="h4 mb-0">{{ monitor.custom_uptime_ranges['90'] }}%</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row">
-                    <!-- Uptime Cards -->
-                    <div class="col-12 mb-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h2 class="h5 mb-4">Overall Uptime</h2>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="uptime-stat" style="flex: 1">
-                                        <h3 class="h6 text-muted mb-1">Last 24 hours</h3>
-                                        <p class="h4 mb-0">{{ monitor.custom_uptime_ranges['1'] }}%</p>
-                                    </div>
-                                    <div class="vr mx-4" style="height: 40px;"></div>
-                                    <div class="uptime-stat" style="flex: 1">
-                                        <h3 class="h6 text-muted mb-1">Last 7 days</h3>
-                                        <p class="h4 mb-0">{{ monitor.custom_uptime_ranges['7'] }}%</p>
-                                    </div>
-                                    <div class="vr mx-4" style="height: 40px;"></div>
-                                    <div class="uptime-stat" style="flex: 1">
-                                        <h3 class="h6 text-muted mb-1">Last 30 days</h3>
-                                        <p class="h4 mb-0">{{ monitor.custom_uptime_ranges['30'] }}%</p>
-                                    </div>
-                                    <div class="vr mx-4" style="height: 40px;"></div>
-                                    <div class="uptime-stat" style="flex: 1">
-                                        <h3 class="h6 text-muted mb-1">Last 90 days</h3>
-                                        <p class="h4 mb-0">{{ monitor.custom_uptime_ranges['90'] }}%</p>
-                                    </div>
+                <!-- Response Time Card -->
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-4">
+                                <h2 class="h5 mb-0">Response Time</h2>
+                                <span class="text-muted ms-2">Last 2 days</span>
+                            </div>
+                            <div class="response-time-chart">
+                                <canvas id="responseTimeChart" height="100"></canvas>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-4">
+                                <div class="response-stat" style="flex: 1">
+                                    <h3 class="h6 text-muted mb-1">Avg. response time</h3>
+                                    <p class="h4 mb-0">{{ "%.2f"|format(monitor.response_times.avg) }}ms</p>
+                                </div>
+                                <div class="vr mx-4" style="height: 40px;"></div>
+                                <div class="response-stat" style="flex: 1">
+                                    <h3 class="h6 text-muted mb-1">Max. response time</h3>
+                                    <p class="h4 mb-0">{{ "%.2f"|format(monitor.response_times.max) }}ms</p>
+                                </div>
+                                <div class="vr mx-4" style="height: 40px;"></div>
+                                <div class="response-stat" style="flex: 1">
+                                    <h3 class="h6 text-muted mb-1">Min. response time</h3>
+                                    <p class="h4 mb-0">{{ "%.2f"|format(monitor.response_times.min) }}ms</p>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Response Time Card -->
-                    <div class="col-12 mb-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center mb-4">
-                                    <h2 class="h5 mb-0">Response Time</h2>
-                                    <span class="text-muted ms-2">Last 2 days</span>
-                                </div>
-                                <div class="response-time-chart">
-                                    <canvas id="responseTimeChart" height="100"></canvas>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center mt-4">
-                                    <div class="response-stat" style="flex: 1">
-                                        <h3 class="h6 text-muted mb-1">Avg. response time</h3>
-                                        <p class="h4 mb-0">{{ "%.2f"|format(monitor.response_times.avg) }}ms</p>
-                                    </div>
-                                    <div class="vr mx-4" style="height: 40px;"></div>
-                                    <div class="response-stat" style="flex: 1">
-                                        <h3 class="h6 text-muted mb-1">Max. response time</h3>
-                                        <p class="h4 mb-0">{{ "%.2f"|format(monitor.response_times.max) }}ms</p>
-                                    </div>
-                                    <div class="vr mx-4" style="height: 40px;"></div>
-                                    <div class="response-stat" style="flex: 1">
-                                        <h3 class="h6 text-muted mb-1">Min. response time</h3>
-                                        <p class="h4 mb-0">{{ "%.2f"|format(monitor.response_times.min) }}ms</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Recent Events Card -->
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <h2 class="h5 mb-4">Recent events</h2>
-                                <div class="recent-events">
-                                    {% for event in events %}
-                                    <div class="event-item mb-4">
-                                        <div class="d-flex align-items-center">
-                                            <span class="event-icon {{ 'text-success' if event.type == 'up' else 'text-danger' }} me-3">
-                                                <i class="fas fa-circle"></i>
-                                            </span>
-                                            <div>
-                                                <h3 class="h6 mb-1">{{ event.title }}</h3>
-                                                <p class="text-muted small mb-0">{{ event.timestamp }}</p>
-                                                {% if event.details %}
-                                                <p class="mb-0 mt-2">{{ event.details }}</p>
+                <!-- Recent Events Card -->
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="h5 mb-4">Recent events</h2>
+                            <div class="recent-events">
+                                {% for event in events %}
+                                <div class="event-item mb-4">
+                                    <div class="d-flex align-items-start">
+                                        <span class="event-icon {{ 'text-success' if event.type == 'up' else 'text-danger' }} me-3">
+                                            {% if event.title == 'Running again' %}
+                                                <i class="fas fa-check-circle"></i>
+                                            {% elif event.title == 'Down' %}
+                                                <i class="fas fa-exclamation-circle"></i>
+                                            {% else %}
+                                                <i class="fas fa-play-circle"></i>
+                                            {% endif %}
+                                        </span>
+                                        <div>
+                                            <h3 class="h6 mb-1">
+                                                {% if event.title == 'Running again' %}
+                                                    Running again
+                                                {% elif event.title.startswith('Monitor') %}
+                                                    Monitor started
+                                                {% else %}
+                                                    {% if event.duration %}
+                                                        Down for {{ (event.duration / 60) | int }}h, {{ event.duration % 60 }}min
+                                                    {% else %}
+                                                        Down
+                                                    {% endif %}
                                                 {% endif %}
-                                            </div>
+                                            </h3>
+                                            <p class="text-muted small mb-0">{{ event.timestamp }}</p>
+                                            {% if event.details and event.type == 'down' %}
+                                                <p class="mb-0 mt-2">{{ event.details }}</p>
+                                            {% endif %}
                                         </div>
                                     </div>
-                                    {% endfor %}
                                 </div>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>
