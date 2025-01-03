@@ -45,7 +45,7 @@ function initializeUptimeCharts() {
                     categoryPercentage: 1.0,
                     backgroundColor: data.map(value => {
                         if (value === null) return '#e9ecef'; // No data
-                        if (value === 0) return '#dc3545';    // Down (red)
+                        if (value < 100) return '#dc3545';    // Down (red)
                         return '#3bd671';                     // Up (green)
                     })
                 }]

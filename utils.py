@@ -42,6 +42,9 @@ def fetch_monitor_data(api_key):
         processed_monitors = []
         for index, monitor in enumerate(data['monitors'], 1):
             try:
+                # Split the custom uptime ranges into daily values
+                uptime_ranges = monitor.get('custom_uptime_ranges', '').split('-')
+
                 processed_monitor = {
                     'id': monitor.get('id'),
                     'name': f"System {str(index).zfill(2)}",  # Format: System 01, System 02, etc.
@@ -49,7 +52,8 @@ def fetch_monitor_data(api_key):
                     'status': get_status_text(monitor.get('status')),
                     'uptime': float(monitor.get('all_time_uptime_ratio', 0)),
                     'last_check': format_timestamp(monitor.get('last_check', 0)),
-                    'status_class': get_status_class(monitor.get('status'))
+                    'status_class': get_status_class(monitor.get('status')),
+                    'uptime_ranges': uptime_ranges
                 }
                 processed_monitors.append(processed_monitor)
             except Exception as e:
