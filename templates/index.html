@@ -20,7 +20,7 @@
                             <span class="live-dot {{ status_color }}"></span>
                         </div>
                         <div>
-                            <h2 class="h4 mb-0">Some Systems <span class="{{ text_color }}">{{ 'Down' if all_down else ('Operational' if not some_down else 'Down') }}</span></h2>
+                            <h2 class="h4 mb-0">{{ 'All' if not some_down and not all_down else 'Some' }} Systems <span class="{{ text_color }}">{{ 'Down' if all_down else ('Operational' if not some_down else 'Down') }}</span></h2>
                         </div>
                     </div>
                 </div>
